@@ -1,0 +1,6 @@
+Guillermo,Niebla,nieblarobertguillermo@gmail.com
+Mario,Olivares,olivares@gmail.com
+Semedo ,Rodriguez,rodriguez@gmail.com
+Daniel,Perez,dani@gmail.com
+Melanie,Lozada,melanie@gmail.com
+Alejandro,Maticurema,alejandro@gmail.com
