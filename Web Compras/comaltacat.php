@@ -1,3 +1,7 @@
+<?php
+include_once "otras_funciones.php";
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,33 +24,9 @@
         }
 
     ?>
-
-
-
-
 </body>
 </html>
 <?php
-function conexionBBDD()
-{
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname="COMPRASWEB";
-    $conn = null;
-
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname",$username, $password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-    }
-    catch(PDOException $e)
-    {
-        echo "Error: " . $e->getMessage();
-    }
-
-    return $conn;  
-}
 
 function recogerDatos()
 {
@@ -119,17 +99,5 @@ function verificarDatos($nombre, $categoria)
     $conn = null;
 
 }
-
-
-function depurar($cadena)
-{
-    $cadena=trim($cadena);
-    $cadena=stripslashes($cadena);
-    $cadena=htmlspecialchars($cadena);
-    return $cadena;
-}
-
-
-
 ?>
 
