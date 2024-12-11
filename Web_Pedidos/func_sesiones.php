@@ -1,32 +1,30 @@
 <?php
+//listo
 function crearSesion($usuario,$contraseña) //asignarVariablesSession
 {
-    $_SESSION["usuario"]=$usuario;
-    $_SESSION["contraseña"]=$contraseña;
+    $_SESSION["nombreUsu"]=$usuario;
+    $_SESSION["contraUsu"]=$contraseña;
 }
-
+/*****************************************************************************************************/
+//listo
 function eliminarSesionYRedirigir()
 {
     session_destroy();
     session_unset();
     setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
-    header("Location: ./login.php");
+    header("Location: ./pe_login.php");
 }
 
-function eliminarSesion()
-{
-    session_destroy();
-    session_unset();
-    setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
-
-}
+/*****************************************************************************************************/
+//listo
 function verificarSesion()
 {
     $sessionCreada = false;
 
-    if((isset($_SESSION["usuario"]) && isset($_SESSION["contrasena"])))
+    if(isset($_SESSION["nombreUsu"]) && isset($_SESSION["contraUsu"]))
+    {
         $sessionCreada = true;
-
+    }
  return $sessionCreada;
 }
 ?>

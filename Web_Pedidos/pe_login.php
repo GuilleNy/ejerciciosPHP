@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once "func_login.php";
 
 ?>
@@ -8,7 +9,7 @@ include_once "func_login.php";
 		<meta charset="utf-8" />
 		<meta name="author" content="Guillermo" />
 	<body>
-		<form action="func_login.php"   method="POST">
+		<form action=""   method="POST">
 
             <label for="nombreUsu"><strong>User: </strong></label>
             <input type="text"  name="nombreUsu" size="25"><br><br>
@@ -17,13 +18,21 @@ include_once "func_login.php";
             <input type="text" name="contraseña" size="25"><br><br>
 
 
-            <input type="checkbox" id="recordarme" name="recordarme">
-            <label for="recordarme">Recordarme</label><br>
 			
             <input type="submit" value="Login" name="login" >
 			<input type="reset" value="Borrar">
 		</form>
+       
+        <?php
+
+        if (isset($_POST['login'])) 
+        {   
+            list($usuario,$contraseña)=recogerDatos();
+            verificarDatos($usuario, $contraseña);
+        }
+
         
+        ?>
 		
 	</body>
 </html>

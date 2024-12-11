@@ -1,9 +1,9 @@
 <?php
-
+session_start();
 include_once "otras_funciones.php";
+include_once "func_sesiones.php";
 
-//verificamos que haya cookies existente
-if(!verificarCookieExistente())
+if(!verificarSesion())
 {
 	header("Location: ./pe_login.php");
 }
@@ -14,6 +14,7 @@ if(!verificarCookieExistente())
 		<title>Inicio</title>
 		<meta charset="utf-8" />
 		<meta name="author" content="tu nombre" />
+	</head>
 	<body>
 		
 			<form action="web1.php">
@@ -30,20 +31,24 @@ if(!verificarCookieExistente())
 			</form>
 
             
-            <form action=<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?> method="POST">
-            	<input type="submit" value="Cerrar sesion"  >
-            </form>
+			<form method="POST" action="">
+        		<input type="submit" value="Cerrar sesión" name="cerrarSesion">
+    		</form>
+			<?php
+
+			var_dump($_SESSION["nombreUsu"]);
+			var_dump($_SESSION["contraUsu"]);
+
+			?>
 		
 		<?php
-		/*En cuanto se pulse el boton de cerrar sesion, mediante estas condiciones
-		verificamos que haya una cookies creada y si ese es el caso procedemos a eliminar la cookies */
-			if($_SERVER["REQUEST_METHOD"] == "POST")
+
+			if(isset($_POST['cerrarSesion']))
 			{
-				if(isset($_COOKIE["nombreUsu"]) && isset($_COOKIE["contraUsu"]))
+				if(isset($_SESSION["nombreUsu"]) && isset($_SESSION["contraUsu"]))
 				{
-					eliminarCookie();
+					eliminarSesionYRedirigir();
 				}
-					
 			}
     	?>
 	</body>
