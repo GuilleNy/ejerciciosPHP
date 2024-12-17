@@ -88,9 +88,6 @@ try {
 	
 	function insertarEmpleado($valido, $datos , $conn)
 	{
-		
-		
-		
 		if ($valido)
 		{
 			$stmt = $conn->prepare("INSERT INTO emple (dni, nombre, salario, fecha_nac) 

@@ -24,20 +24,12 @@ include_once "func_login.php";
 		</form>
        
         <?php
-
-        if (isset($_POST['login'])) 
-        {   
-            list($usuario,$contraseña)=recogerDatos();
-            verificarDatos($usuario, $contraseña);
-        }
-
-        
+            if (isset($_POST['login'])) 
+            {   
+                list($usuario,$contraseña)=recogerDatos();
+                verificarDatos($usuario, $contraseña);
+            }
         ?>
 		
 	</body>
 </html>
-<?php
-
-
-
-?>

@@ -17,13 +17,13 @@ if(!verificarSesion())
 	</head>
 	<body>
 		
-			<form action="web1.php">
-				<input type="submit" value="Ir a Web 1" >
+			<form action="pe_altaped.php">
+				<input type="submit" value="Ir a Alta Pedidos" >
 			</form>
 			
 		   
-			<form action="web2.php">
-				<input type="submit" value="Ir a Web 2" >
+			<form action="pe_consped.php">
+				<input type="submit" value="Información de los pedidos realizados" >
 			</form>
 			
 			<form action="web3.php">
