@@ -5,11 +5,12 @@
         $usuarios = fopen("usuarios.txt", "r");
 
         if ($usuarios) {
-            $nombresJugadores =array();
+            $nombresJugadores =[];
             
             
-            while (($linea = fgets($usuarios)) !== false) {
-                list($nombre) = explode(",",$linea); 
+            while (($linea = fgets($usuarios)) !== false) //Cada vez que fgets($usuarios) se ejecuta, devuelve una línea
+            {
+                list($nombre) = explode(",",$linea); //explode(",", $linea): Separa la línea en un array usando " , " como delimitador.
                 $nombresJugadores[] = $nombre;
             }
     
