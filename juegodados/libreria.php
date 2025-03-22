@@ -47,7 +47,7 @@
     echo "<br>";
 
 
-    // Funcion para llenar el array de cada jugador con 6 numeros aleatorios
+    // Funcion para llenar el array de cada jugador con 6 numeros aleatorios.
     //En esta funcion el & es necesario para que la función modifique directamente el array que se le pasa
     // como argumento, en lugar de trabajar con una copia del array.
     function llenarDados(&$jugador, $numdados)
@@ -76,7 +76,7 @@
    
     function visualizarTabla( $jugadores)
     {
-        // Utilizo empty() para determinar si una ariable esta vacia
+        // Utilizo empty() para determinar si una variable esta vacia
 
 
        
@@ -131,7 +131,7 @@
     }
 
     /************************************************************************** */
-    $valoresPuntos = array();
+    $valoresPuntos = [];
     
     
     foreach ($jugadores as $nombre => $dados) 
