@@ -8,6 +8,10 @@ if(!verificarSesion())
 	header("Location: ./pe_login.php");
 }
    
+if(!isset($_SESSION['cesta']))
+{
+    $_SESSION['cesta']=[];
+}
 
 function obtenerProductos()
 {
@@ -22,19 +26,28 @@ return $resultado;
 }
 $listaProductos=obtenerProductos();
 
-
+/************************************************************************************************************************** */
+/*Listo */
 function añadirProductos()
 {
-    if(!isset($_SESSION['cesta']))
+    $producto= $_POST['producto']?? null;
+    $cantidad = (int) ($_POST['cantidad'] ?? 0);
+   
+    if (isset($_SESSION['cesta'][$producto]) ) {
+        // Si el producto ya existe, incrementa la cantidad
+        $_SESSION['cesta'][$producto] = (int) $_SESSION['cesta'][$producto] + $cantidad;
+    } else if ($producto != null)
     {
-        $_SESSION['cesta']=[];
-    }
+        // Si no existe, crea una nueva entrada
+        $_SESSION['cesta'][$producto] = $cantidad;
+    } 
 
-    if(isset($_POST['añadirCesta']))
+    /*
+    if(isset($_POST['añadirCesta']) && $cantidad > 0)
     {
         $producto= $_POST['producto']?? null;
 
-        if($producto)
+        if(!empty($producto))
         {
             if (!in_array($producto, $_SESSION['cesta']))
             {
@@ -42,82 +55,118 @@ function añadirProductos()
             }
         }
     }
+    */
 
 }
-eliminarProductoCesta();
-añadirProductos();
+
+
 $listaCesta=$_SESSION['cesta'];
+añadirProductos();
+eliminarProductoCesta();
+
 
 
 function eliminarProductoCesta()
 {
-    if(isset($_POST['eliminarProducto']))
-    {
-        $producto= $_POST['cesta']?? null;
-        
-
-        if($producto)
+    if (isset($_POST['eliminarProducto'])) {
+        $productoEl = $_POST['cestaArticulos']?? null;
+       // echo "<p>" . $productoEl . "</p>";
+        if (isset($_SESSION['cesta'][$productoEl])) 
         {
-            $indice= array_search($producto, $_SESSION['cesta']);
-            if ($indice !== false) {
-                unset($_SESSION['cesta'][$indice]); // Eliminar producto
-                
-            }
+            unset($_SESSION['cesta'][$productoEl]);
+            echo "<p>Producto eliminado correctamente.</p>";
+        } else {
+            echo "<p>No hay productos en la cesta.</p>";
         }
-    }    
+    }
 }
-function actualizarFechaDeOrden($conn, $nombre)
+/************************************************************************************************************************** */
+/*Listo */
+function ultimaOrden()
+{
+    $nuevoNum="";
+    $conn=baseDeDatos();
+    $stmt = $conn->prepare("SELECT orderNumber 
+                            from orders 
+                            ORDER BY orderNumber DESC  LIMIT 1");
+    $stmt -> execute();
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $ultimoCodigo=$stmt->fetch();
+
+    if($ultimoCodigo)
+    {
+        $cod= $ultimoCodigo['orderNumber'];
+		$nuevoNum=$cod+1;
+    }
+    return $nuevoNum;
+}
+function generarTablaOrden($conn, $nombre)
 {
     $fechaHoy = date('Y-m-d');
     $fechaEnv= null;
-    $stmt = $conn->prepare("UPDATE orders 
-                        SET orderDate = :fechaPedido, 
-                            requiredDate = :fechaSolicitud, 
-                            shippedDate = :fechaEnvio 
-                        WHERE customerNumber = :cliente");
+    $numOrden=ultimaOrden();
+    $status="In Process";
+    $comments = null;
+
+    $stmt= $conn -> prepare("INSERT INTO orders (orderNumber , orderDate, requiredDate, shippedDate, `status`,comments, customerNumber)
+                            VALUES (:numeroOrden, :fechaPedido, :fechaSolicitud,:fechaEnvio ,:stat ,:comentario,:cliente)");
+    $stmt->bindParam(':numeroOrden', $numOrden);    
     $stmt->bindParam(':fechaPedido', $fechaHoy);
     $stmt->bindParam(':fechaSolicitud',$fechaHoy);
-    $stmt->bindParam(':cliente',$nombre);
     $stmt->bindParam(':fechaEnvio', $fechaEnv);
+    $stmt->bindParam(':stat',$status);
+    $stmt->bindParam(':comentario', $comments);
+    $stmt->bindParam(':cliente',$nombre);
+    
 
     if($stmt->execute())
     {
-        echo "<p>Fechas actualizadas correctamente.</p>";
+        echo "<p>Tabla Order actualizada correctamente.</p>";
         
     }
     else
     {
-        echo "<p>Error al actulizar fechas de orden.</p>";
+        echo "<p>Error al actulizar tabla de orden.</p>";
     } 
 }
+/************************************************************************************************************************** */
 
 
-
-function actualizarStock($conn)
+/*Listo */
+function actualizarStock()
 {
-    $indice=0;
-
-    while($indice<count($_SESSION['cesta']))
+    $conn=baseDeDatos();
+    $productos=$_SESSION['cesta'];
+    foreach ($productos as $producto => $cantidad) 
     {
-        $resta=1;
-        $stmt = $conn->prepare("UPDATE products 
+        $resta=$cantidad;
+
+
+        if ($resta >0 )
+        {
+            $stmt = $conn->prepare("UPDATE products 
                                 SET quantityInStock= quantityInStock-:rest
                                 WHERE productName =:nameProducto");
-        $stmt->bindParam(':rest', $resta);
-        $stmt->bindParam(':nameProducto',$_SESSION['cesta'][$indice]);
-        $stmt->execute();
-
-        $indice++;
+            $stmt->bindParam(':rest',$resta);
+            $stmt->bindParam(':nameProducto',$producto);
+            $stmt->execute();
+        }
+        
     }
-
+   
 }
+    
+
+/************************************************************************************************************************** */
+/*Listo */
+/** Afecta a la suma de prodcutos */
 function sumaProductos()
 {
     $conn=baseDeDatos();
     $total= 0;
     $productos=$_SESSION['cesta'];
 
-    foreach ($productos as $producto) {
+    foreach ($productos as $producto => $cantidad) {
        
         $stmt = $conn->prepare("SELECT buyPrice FROM products WHERE productName = :producto");
         $stmt->bindParam(':producto', $producto);
@@ -127,7 +176,7 @@ function sumaProductos()
 
         // Si el producto existe, sumamos su precio al total
         if ($resultado!= null) {
-            $total += $resultado['buyPrice'];
+            $total += $resultado['buyPrice']*$cantidad;
         } else {
             echo "<p>El producto '$producto' no existe en la base de datos.</p>";
         }
@@ -152,10 +201,12 @@ function actulizarAmount($conn, $usuarioCod, $codigoPago)
     $stmt->execute();
 }
 
+/************************************************************************************************************************** */
+
 function verificarPago()
 {
     $nombre= $_SESSION["nombreUsu"];
-    $numPago= $_POST['numeroPago']?? null;
+    $numPago= $_POST['numeroPago'] ?? null;
     $resultado='';
 
     if(isset($_POST['validarPago']))
@@ -171,8 +222,8 @@ function verificarPago()
 
         if ($resultado!= null)
         {
-            actualizarFechaDeOrden($conn, $nombre);
-            actualizarStock($conn);
+            generarTablaOrden($conn, $nombre);
+            actualizarStock();
             actulizarAmount($conn, $nombre, $numPago);
 
         }else{
@@ -184,7 +235,7 @@ function verificarPago()
 return $resultado;
 }
 
-
+/*************************************************************************************************************************************************** */
 ?>
 <html>
 	<head>
@@ -208,17 +259,21 @@ return $resultado;
                 
                 ?>
             </select>
+            <label for="product">Cantidad: </label>
+            <input type="number" name="cantidad" style="width: 40px;" value="0">
+            <br>
+
             <input type="submit" value="Añadir a la cesta" name="añadirCesta"/>
 
             <br>
             <!-- Articulos en la cesta -->
             <label for="cestaArticulos">Artículos en cesta: </label>
-            <select id="cesta" name="cesta" >
+            <select id="cestaArticulos" name="cestaArticulos" >
                 <option disabled selected>--Cesta Productos--</option>
                 <?php
-                    foreach ($listaCesta as $row)
+                    foreach ($listaCesta as $producto => $cantidad)
                     {
-                        echo "<option value=\"" . $row . "\">" . $row . "</option>";
+                        echo "<option value=\"" . $producto . "\">". $producto ."</option>";
                     }
                 ?>
             </select>
@@ -236,7 +291,10 @@ return $resultado;
 
         </form>
         
-            
+        <form action="pe_inicio.php">
+        	<input type="submit" value="Volver a Inicio" name="volver">
+    	</form>
+        
 		<form method="POST" action="">
         	<input type="submit" value="Cerrar sesión" name="cerrarSesion">
     	</form>
@@ -245,6 +303,9 @@ return $resultado;
         var_dump($_SESSION['cesta']);
 
         var_dump(verificarPago());
+
+        echo ("<br>");
+      
 
         ?>
 		<?php
