@@ -11,12 +11,14 @@
 
     
 
-    //Utilizo el array_filter para contener solo jugadores válidos.
+    //array_filter elimina los valores vacíos o falsos (null, "", false, 0) del array.
+    //Si un jugador no ingresó un nombre, su variable estará vacía ("") y array_filter la eliminará del array.
 
     $nombresJugadores = array_filter([$jugador1, $jugador2, $jugador3, $jugador4]); 
 
-    //Cuento el numero de jugadores par apoder realzar la excepcion
+    //Cuento el numero de jugadores para poder realzar la excepcion
     $numJugadores = count($nombresJugadores);
+    echo "Hay solo " . $numJugadores . " jugadores. <br>";
 
     // Comprobar el número de jugadores
     if ($numJugadores < 2 || $numJugadores > 4) {
@@ -33,12 +35,21 @@
         throw new Exception("El numero de dados debe de ser minimo de 1 y como maximo de 10.");
     }
 
-    // Inicializar el array 
-    $jugadores = array();
+    // Inicializar el array con valores vacios.
+    $jugadores = [];
+
     foreach ($nombresJugadores as $nombre) {
-        $jugadores[$nombre] = array(); 
+        //está creando un array asociativo donde las claves son los nombres de los jugadores y los valores son arrays vacíos.
+        $jugadores[$nombre] = []; 
     }
+
+    print_r($jugadores);
+    echo "<br>";
+
+
     // Funcion para llenar el array de cada jugador con 6 numeros aleatorios
+    //En esta funcion el & es necesario para que la función modifique directamente el array que se le pasa
+    // como argumento, en lugar de trabajar con una copia del array.
     function llenarDados(&$jugador, $numdados)
     {
         for ($i = 0; $i < $numdados; $i++) 
@@ -51,13 +62,15 @@
 
 
     // Llenar los dados para cada jugador donde utilizo la funcion llenarDados
-    foreach ($jugadores as &$jugador) 
+    foreach ($jugadores as &$jugador) //&$jugador hace que PHP trabaje directamente con los valores originales de $jugadores, sin crear copias.
     {
-        
-        llenarDados($jugador, $numdados);
+        //No, no es necesario poner el & en la llamada a la función llenarDados($jugador, $numdados); 
+        //si ya has utilizado la referencia & en el foreach.
+        llenarDados($jugador, $numdados); //esta funcion modifica directamente los valores en $jugadores, es decir le 
+                                          // agrega campo a cada nombre del jugador.
     }
 
-    
+    print_r($jugadores);
     //print_r(array_filter($jugadores));
     /************************************************************************** */
    
