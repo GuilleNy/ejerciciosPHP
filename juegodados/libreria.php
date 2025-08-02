@@ -155,19 +155,14 @@
         }
     }
 
-
-
-
    //Visualizo el array de ganadores 
 
     foreach($ganadores as $nombre )
     {
         echo "GANADOR: " .  $nombre . "<br>";
     }
-   
+
     echo "NUMERO DE GANADORES: " . count($ganadores) . "<br>";
-
-
     } 
     
     catch (Exception $e) 
