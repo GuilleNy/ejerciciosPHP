@@ -36,6 +36,20 @@ $mascaraBin=array();
 $cont=0;
 for ($i=0; $i < count($ipBinArray); $i++) { 
    
+    if($ipBinario >= 8){
+        $mascaraBin[$i]="11111111";
+        $ipBinario-=8;
+    }else{
+
+        $mascaraBin[$i]=str_repeat("1", $ipBinario);
+    }
+
+
+
+
+
+
+
     $mascaraBin[$i]="";
     while ($array1[1] <= $cont){
         if($cont < $array1[1]){
