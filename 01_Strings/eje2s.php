@@ -1,7 +1,6 @@
 <?php
-/* Convertir la IP a su representación en binario haciendo uso 
-de la función printfo sprintf.Únicamente se podrán utilizar 
-funciones de cadenas de caracteres. */
+/* Programa ej2s.php realizar el mismo programa del ejercicio anterior pero sin utilizar las funciones printf
+o sprintf */
 /*IP 192.18.16.204 en binario es 11000000.00010010.00010000.11001100 
 IP 10.33.161.2 en binario es 00001010.00100001.10100001.00000010
 */
@@ -9,7 +8,7 @@ IP 10.33.161.2 en binario es 00001010.00100001.10100001.00000010
 ?>
 
 <HTML>
-<HEAD><TITLE> EJ1-Conversion IP Decimal a Binario </TITLE></HEAD>
+<HEAD><TITLE> EJ2-Conversion IP Decimal a Binario </TITLE></HEAD>
 <BODY>
 <?php
 $ip="192.18.16.204";
@@ -21,7 +20,7 @@ function convertirBinario($ip){
     $array=explode('.', $ip);
 
     for ($i=0; $i < count($array) ; $i++) {
-        $ipBinario.=str_pad(sprintf("%b",$array[$i]),8,0,STR_PAD_LEFT);
+        $ipBinario.=str_pad(numBinario($array[$i]),8,0,STR_PAD_LEFT);
         if($i < count($array) - 1){
             $ipBinario.=".";
         }else{
@@ -29,6 +28,20 @@ function convertirBinario($ip){
         }
     }
     return $ipBinario;
+}
+
+function numBinario($num){
+    //$num=16;
+    $ipBin="";
+
+    while ($num != 0) {
+        $resto=$num%2;
+        $ipBin=$resto . $ipBin;
+        $num=intdiv($num, 2);
+    }
+    $ipBin=str_pad($ipBin,8,0,STR_PAD_LEFT);
+    //echo $ipBin;
+    return $ipBin;
 }
 
 echo "IP $ip en binario es " . convertirBinario($ip) . "<br/>";
