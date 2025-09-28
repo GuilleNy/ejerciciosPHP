@@ -2,7 +2,7 @@
 <HEAD><TITLE> EJ3-Direccion Red – Broadcast y Rango</TITLE></HEAD>
 <BODY>
 <?php
-$ip="192.168.16.100/16";
+$ip="192.168.16.100/21";
 
 $num_masc=explode("/", $ip);
 $ip_dec=$num_masc[0];
@@ -10,13 +10,22 @@ $ip_dec=$num_masc[0];
 $ipBinario=convertirIpBinario($ip_dec);
 $mascara=obtenerMascara($num_masc[1], $ipBinario);
 
+echo "IP " . $ip . "<br/>";
+
+echo "Mascara " . $num_masc[1] . "<br/>";
+
+echo "Dirección Red: " . obtenerDireccionRed($mascara, $ipBinario) . "<br/>";
+
+echo "Dirección Broadcast: " . (obtenerbroadcast($ipBinario, $mascara, $num_masc[1])) . "<br/>";
+
+
+
+/*
 print_r (convertirIpBinario($ip)) ;
 echo "<br/>";
 
 print_r(obtenerMascara($num_masc[1], $ipBinario));
-
-echo "<br/>";
-echo obtenerDireccionRed($mascara, $ipBinario);
+*/
 
 function convertirIpBinario($ip){ //devuelve un array
     $ipArray=explode(".", $ip);//obtengo en una array la ip separado
@@ -35,20 +44,16 @@ function obtenerMascara($masc, $ipBinario){     //devuelve un array
     $mascaraBin=array();
 
     for ($i=0; $i < count($ipBinario); $i++) { 
-    
         if($mascara >= 8){
             $mascaraBin[$i]="11111111";
             $mascara-=8;
-        }else{
-            $mascaraBin[$i]=str_repeat("1", $mascara);
-            $mascara-=$mascara;
-            $mascaraBin[$i]=str_pad($mascaraBin[$i],8,0,STR_PAD_RIGHT);
+        }else if($mascara >= 0){
+            $mascaraBin[$i]=str_pad(str_repeat("1", $mascara), 8, "0", STR_PAD_RIGHT);
+            $mascara=0;  
         }
     }
-    return $mascaraBin; //devuelve una cadena 
+    return $mascaraBin; //devuelve un array 
 }
-
-
 
 function obtenerDireccionRed($mascaraBin , $ipBin){
     //$mascaraBin
@@ -76,7 +81,7 @@ function obtenerDireccionRed($mascaraBin , $ipBin){
             $ipDec.=" ";
         }
     }
-    return $ipDec;//envia una cadena ip "192.168.16.0"
+    return $ipDec;//envia una array
 }
 
 
@@ -108,10 +113,8 @@ function obtenerbroadcast($ip, $mascara, $num_masc){
     }
     $broadcastDecimal=implode(".", $broadcastDec);
 
-    return $broadcastDecimal;  
+    return $broadcastDecimal;  //devuelve una cadena
 }
-echo "<br/>";
-print_r(obtenerbroadcast($ipBinario, $mascara, $num_masc[1])) ;
 
 
 
