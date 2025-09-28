@@ -19,19 +19,13 @@ echo "<br/>";
 echo obtenerDireccionRed($mascara, $ipBinario);
 
 function convertirIpBinario($ip){ //devuelve un array
-    $ipBinario="";
     $ipArray=explode(".", $ip);//obtengo en una array la ip separado
+    $ipBinario=array();
 
     for ($i=0; $i < count($ipArray) ; $i++) {
-        $ipBinario.=str_pad(sprintf("%b",$ipArray[$i]),8,0,STR_PAD_LEFT);
-        if($i < count($ipArray) - 1){
-            $ipBinario.=".";
-        }else{
-            $ipBinario.=" ";
-        }
+        $ipBinario[]=str_pad(sprintf("%b",$ipArray[$i]),8,0,STR_PAD_LEFT);  
     }
-    $ip_arr=explode(".", $ipBinario );
-    return $ip_arr;
+    return $ipBinario;
 }
 
 
@@ -82,28 +76,44 @@ function obtenerDireccionRed($mascaraBin , $ipBin){
             $ipDec.=" ";
         }
     }
-    return $ipDec;
+    return $ipDec;//envia una cadena ip "192.168.16.0"
 }
 
 
+function obtenerbroadcast($ip, $mascara, $num_masc){
+    $red=obtenerDireccionRed($ip, $mascara);
+    $redArray=explode(".", $red);
+    //$broadcast=array();
+    $redCadena=array();
 
-/*
+    for ($i=0; $i < count($redArray); $i++) { 
+        $redCadena[]=str_pad(sprintf("%b",$redArray[$i]),8,0,STR_PAD_LEFT); 
+    }
+  
+    //lo convertimos en una cadena sin los puntos
+    $binarioCompleto = implode("", $redCadena);
 
-function obtenerbroadcast($ip){
-    $ipBinario=explode(".", convertirBinario($ip)); //"11000000.10101000.00010000.01100100"
-    $mascara=explode(".", obtenerMascara($ip)); //    "11111111.11111111.11111000.00000000"
-    $broadcast=array();
+   
+    for ($i = $num_masc; $i < 32; $i++) {
+        $binarioCompleto[$i] = "1";
+    }
+    
+    //separaramos otra vez en octetos
+    $broadcastBin = str_split($binarioCompleto, 8);
 
-    for ($i=0; $i < count($ipBinario); $i++) { 
-        if($ipBinario[$i] == 1 && $mascara[$i] == 1){
+    //convertimos a decimal
+    $broadcastDec = array();
+    foreach ($broadcastBin as $octeto) {
+        $broadcastDec[] = bindec($octeto);
+    }
+    $broadcastDecimal=implode(".", $broadcastDec);
 
-            $broadcast[$i].=1;
-        }
-
-    }    
+    return $broadcastDecimal;  
 }
+echo "<br/>";
+print_r(obtenerbroadcast($ipBinario, $mascara, $num_masc[1])) ;
 
-*/
+
 
 ?>
 </BODY>
