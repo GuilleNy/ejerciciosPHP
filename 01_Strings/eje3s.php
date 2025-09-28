@@ -88,7 +88,6 @@ function obtenerDireccionRed($mascaraBin , $ipBin){
 function obtenerbroadcast($ip, $mascara, $num_masc){
     $red=obtenerDireccionRed($ip, $mascara);
     $redArray=explode(".", $red);
-    //$broadcast=array();
     $redCadena=array();
 
     for ($i=0; $i < count($redArray); $i++) { 
