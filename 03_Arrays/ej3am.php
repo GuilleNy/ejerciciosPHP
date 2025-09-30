@@ -18,7 +18,7 @@ echo "<table border='1' style='border-collapse: collapse; width:200px;'>";
         echo "<tr>";
         //echo "<td> " . $i ."</td>";
         for ($j=0; $j < 5; $j++) { 
-            echo "<td> " . $cont ."</td>";
+            echo "<td> " . $matriz[$i][$j] ."</td>";
             $cont++;
         }
         echo "</tr>";
