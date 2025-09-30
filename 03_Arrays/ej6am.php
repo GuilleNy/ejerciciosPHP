@@ -1,5 +1,5 @@
 <HTML>
-<HEAD><TITLE> Ejercicios Arrays Unidimensionales</TITLE></HEAD>
+<HEAD><TITLE> Ejercicios Arrays Multidimensionales</TITLE></HEAD>
 <BODY>
 <?php
 
