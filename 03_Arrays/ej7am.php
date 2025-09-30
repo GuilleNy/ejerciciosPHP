@@ -3,9 +3,15 @@
 <BODY>
 <?php
 
-/* definir una matriz de 3x3 con números aleatorios. Generar un array que contenga
-los valores máximos de cada fila y otro que contenga los promedios de la mismas. Mostrar el contenido
-de ambos arrays por pantalla.
+/* definir una matriz que permita almacenar la nota de 10 alumnos en 4 asignaturas
+diferentes. Se pide:
+a. Mostrar por pantalla el alumno con mayor nota en una asignatura determinada.
+b. Mostrar por pantalla el alumno con menor nota en una asignatura determinada.
+c. Para un alumno, mostrar en que materia tiene su nota más baja.
+d. Para un alumno, mostrar en que materia tiene su nota más alta.
+e. Mostrar la media por materia de todos los alumnos.
+f. Mostrar la media por alumno para todas las materias
+
 */
 
 
