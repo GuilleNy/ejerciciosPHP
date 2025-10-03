@@ -20,7 +20,7 @@ $notas= ["Fred" => ["Programacion"=> 5, "BBDD"=> 8, "Java"=> 5, "FOL"=> 6],
         "Maria" => ["Programacion"=> 5, "BBDD"=> 7, "Java"=> 8, "FOL"=> 7],
         "Julia" => ["Programacion"=> 4, "BBDD"=> 6, "Java"=> 8, "FOL"=> 8],
         "Leo" => ["Programacion"=> 9, "BBDD"=> 6, "Java"=> 6, "FOL"=> 7],
-        "Mateo" => ["Programacion"=> 5, "BBDD"=> 6, "Java"=> 5, "FOL"=> 8],
+        "Mateo" => ["Programacion"=> 5, "BBDD"=> 6, "Java"=> 3, "FOL"=> 8],
         "Yulli" => ["Programacion"=> 6, "BBDD"=> 4, "Java"=> 7, "FOL"=> 5],
         "Dani" => ["Programacion"=> 6, "BBDD"=> 5, "Java"=> 8, "FOL"=> 5],
     ];
@@ -36,9 +36,9 @@ foreach ($notas as $alumno => $asignatura) {
     }
 }
 echo "El alumno con mayor nota en Programación es: " . $mayor[1] . "</br>";
-echo "Nota: " . $mayor[0];
+echo "Nota: " . $mayor[0] . "</br>";
 
-var_dump($mayor);
+//var_dump($mayor);
 
 //var_dump($notas);
 
@@ -53,27 +53,43 @@ foreach ($notas as $alumno => $asignatura) {
     }
 }
 echo "El alumno con menor nota en Programación es: " . $menor[1] . "</br>";
-echo "Nota: " . $menor[0];
+echo "Nota: " . $menor[0] . "</br>";
 
-var_dump($menor);
+//var_dump($menor);
 
 //c. Para un alumno, mostrar en que materia tiene su nota más baja
-$alumno="Mateo";
+$nom_alumno="Mateo";
 
-$menor=array();
+$menor_alu=array();
 $menor_nota=10;
 foreach ($notas as $alumno => $asignatura) {
-    if(($asignatura["Programacion"] < $menor_nota) ){
-        $menor_nota=$asignatura["Programacion"];
-        $menor=[$menor_nota, $alumno];
+    foreach ($asignatura as $nombre_asg => $nota) {
+        if(($alumno == $nom_alumno) && ($nota < $menor_nota)){
+            
+            $menor_nota=$nota;
+            $menor_alu=[$nombre_asg, $nota];
+        }
     }
 }
-echo "El alumno con menor nota en Programación es: " . $menor[1] . "</br>";
-echo "Nota: " . $menor[0];
+echo "La materia con la nota mas baja del alumno " . $nom_alumno . " es: " .  $menor_alu[0] . "</br>";
+echo "Nota: " . $menor_alu[1] . "</br>";
 
-var_dump($menor);
+//Para un alumno, mostrar en que materia tiene su nota más alta.
+$nom_alumno="Mateo";
 
-
+$mayor_alu=array();
+$mayor_nota2=0;
+foreach ($notas as $alumno => $asignatura) {
+    foreach ($asignatura as $nombre_asg => $nota) {
+        if(($alumno == $nom_alumno) && ($nota > $mayor_nota2)){
+            
+            $mayor_nota2=$nota;
+            $mayor_alu=[$nombre_asg, $nota];
+        }
+    }
+}
+echo "La materia con la nota mas alta del alumno " . $nom_alumno . " es: " .  $mayor_alu[0] . "</br>";
+echo "Nota: " . $mayor_alu[1];
 
 
 
