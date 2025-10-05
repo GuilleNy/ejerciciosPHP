@@ -1,0 +1,66 @@
+
+<!-- Formulario -->
+
+<h1> Calculadora </h1>
+<form action="" method="post">
+        <label for="num1">Operando 1:</label>
+        <input type="number" name="num1">
+        <br>
+        <br>
+        <label for="num2">Operando 2:</label>
+        <input type="number" name="num2">
+        <br>
+        <br>
+
+        <label for="sele">Selecciona operación: </label><br>
+        <input type="radio" name="operacion" value="suma" checked> Suma<br>
+        <input type="radio" name="operacion" value="resta"> Resta<br>
+        <input type="radio" name="operacion" value="multiplicacion"> Multiplicación<br>
+        <input type="radio" name="operacion" value="division"> División<br>
+        <button type="submit" name="enviar">Enviar</button>
+        <button type="reset">Borrar</button>
+        
+    </form>
+
+<?php
+
+include "otrasFunciones.php";
+
+resultado();
+
+/*******************************FUNCIONES************************************ */
+
+function resultado(){
+    
+    if(isset($_POST["enviar"])){
+        $numero_1=(int) depurar($_POST['num1']);
+        $numero_2=(int) depurar($_POST['num2']);
+        $operacion= $_POST["operacion"];
+
+    switch ($operacion) {
+            case 'suma':
+                echo "<p>Resultado operación: " . $numero_1 . " + " . $numero_2 . " = " . ($numero_1 + $numero_2) . "</p>";
+                break;
+            case 'resta':
+                echo "<p>Resultado operación: " . $numero_1 . " - " . $numero_2 . " = " . ($numero_1 - $numero_2) . "</p>";
+                break;
+            case 'multiplicacion':
+                echo "<p>Resultado operación: " . $numero_1 . " * " . $numero_2 . " = " . ($numero_1 * $numero_2) . "</p>";
+                break;
+            case 'division':
+                echo "<p>Resultado operación: " . $numero_1 . " / " . $numero_2 . " = " . ($numero_1 / $numero_2) . "</p>";
+                break;
+        }
+    }
+
+
+    
+}
+
+
+
+
+
+
+
+?>

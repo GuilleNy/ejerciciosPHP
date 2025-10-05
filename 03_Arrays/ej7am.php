@@ -17,12 +17,12 @@ f. Mostrar la media por alumno para todas las materias
 
 $notas= ["Fred" => ["Programacion"=> 5, "BBDD"=> 8, "Java"=> 5, "FOL"=> 6],
         "Alejandro" => ["Programacion"=> 8, "BBDD"=> 6, "Java"=> 5, "FOL"=> 7],
-        "Maria" => ["Programacion"=> 5, "BBDD"=> 7, "Java"=> 8, "FOL"=> 7],
+        "Maria" => ["Programacion"=> 9, "BBDD"=> 7, "Java"=> 8, "FOL"=> 7],
         "Julia" => ["Programacion"=> 4, "BBDD"=> 6, "Java"=> 8, "FOL"=> 8],
         "Leo" => ["Programacion"=> 9, "BBDD"=> 6, "Java"=> 6, "FOL"=> 7],
         "Mateo" => ["Programacion"=> 5, "BBDD"=> 6, "Java"=> 3, "FOL"=> 8],
         "Yulli" => ["Programacion"=> 6, "BBDD"=> 4, "Java"=> 7, "FOL"=> 5],
-        "Dani" => ["Programacion"=> 6, "BBDD"=> 5, "Java"=> 8, "FOL"=> 5],
+        "Dani" => ["Programacion"=> 6, "BBDD"=> 7, "Java"=> 8, "FOL"=> 5],
     ];
 
 
@@ -74,7 +74,7 @@ foreach ($notas as $alumno => $asignatura) {
 echo "La materia con la nota mas baja del alumno " . $nom_alumno . " es: " .  $menor_alu[0] . "</br>";
 echo "Nota: " . $menor_alu[1] . "</br>";
 
-//Para un alumno, mostrar en que materia tiene su nota más alta.
+//d. Para un alumno, mostrar en que materia tiene su nota más alta.
 $nom_alumno="Mateo";
 
 $mayor_alu=array();
@@ -89,9 +89,31 @@ foreach ($notas as $alumno => $asignatura) {
     }
 }
 echo "La materia con la nota mas alta del alumno " . $nom_alumno . " es: " .  $mayor_alu[0] . "</br>";
-echo "Nota: " . $mayor_alu[1];
+echo "Nota: " . $mayor_alu[1] . "</br>";
 
+//e. Mostrar la media por materia de todos los alumnos.
+$materia=array();
 
+foreach ($notas as $alumno => $asignatura) {
+    foreach ($asignatura as $nombre_asg => $nota) {
+        $materia[$nombre_asg][] = $nota;
+    }
+}
+
+foreach ($materia as $nombre_asg => $nota) {
+    $media = array_sum($nota) / count($nota);
+    echo "Media de $nombre_asg: " . round($media, 2) . "<br>";
+}
+
+echo "-------------------------------------------------------- </br>";
+//f. Mostrar la media por alumno para todas las materias
+
+foreach ($notas as $alumno => $asignatura) {
+    $suma=array_sum($asignatura);
+    $media=$suma / count($asignatura);
+
+    echo "Media de $alumno: " . round($media, 2) . "<br>";
+}
 
 
 ?>
