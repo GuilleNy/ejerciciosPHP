@@ -34,7 +34,8 @@ include "otrasFunciones.php";
 resultado();
 
 /*******************************FUNCIONES************************************ */
-
+//Separar la vista, es decir el echo aparte y las operaciones en funciones para separar la logica sobre la vista.
+//En este caso debo realizar las opaeraciones de suma , resta ..., en funciones apartes.
 function resultado(){
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         $numero_1=(int) depurar($_POST['num1']);
@@ -57,6 +58,8 @@ function resultado(){
         }
     }
 }
+
+
 
 
 
