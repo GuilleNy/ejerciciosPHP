@@ -30,14 +30,12 @@
 
 /*******************************FUNCIONES************************************ */
 function resultado(){
+    $ip = depurar($_POST['ip']);    
+    $conv_bin = convertirBinario($ip);
 
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $ip = depurar($_POST['ip']);    
-        $conv_bin = convertirBinario($ip);
+    echo "<label>Numero Binario:</label>";
+    echo "<input value='$conv_bin' size='35'>";
 
-        echo "<label>Numero Binario:</label>";
-        echo "<input value='$conv_bin' size='35'>";
-    }
 }
 
 function convertirBinario($ip){
