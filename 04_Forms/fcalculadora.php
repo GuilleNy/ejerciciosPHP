@@ -1,8 +1,6 @@
 
-<!-- Formulario -->
-
 <h1> Calculadora </h1>
-<form action="" method="post">
+<form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
         <label for="num1">Operando 1:</label>
         <input type="number" name="num1">
         <br>
@@ -31,13 +29,12 @@ resultado();
 /*******************************FUNCIONES************************************ */
 
 function resultado(){
-    
-    if(isset($_POST["enviar"])){
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
         $numero_1=(int) depurar($_POST['num1']);
         $numero_2=(int) depurar($_POST['num2']);
         $operacion= $_POST["operacion"];
 
-    switch ($operacion) {
+        switch ($operacion) {
             case 'suma':
                 echo "<p>Resultado operación: " . $numero_1 . " + " . $numero_2 . " = " . ($numero_1 + $numero_2) . "</p>";
                 break;
@@ -52,9 +49,6 @@ function resultado(){
                 break;
         }
     }
-
-
-    
 }
 
 
