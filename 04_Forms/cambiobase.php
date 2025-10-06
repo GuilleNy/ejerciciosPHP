@@ -34,7 +34,7 @@ function resultado(){
 function convertirBinario($decimal){
     $binario=str_pad(sprintf("%b",$decimal),8,0,STR_PAD_LEFT);
     
-    echo "<table>";
+    echo "<table border='1'>";
     echo "<tr>";
     echo "<td>Binario</td>";
     echo "<td>" . $binario . "</td>";
