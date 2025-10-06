@@ -8,11 +8,11 @@
     <h1> Calculadora </h1>
     <form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
         <label for="num1">Operando 1:</label>
-        <input type="number" name="num1">
+        <input type="number" name="num1" value="<?php if(isset($_POST['num1'])) echo htmlspecialchars($_POST['num1']); ?>">
         <br>
         <br>
         <label for="num2">Operando 2:</label>
-        <input type="number" name="num2">
+        <input type="number" name="num2" value="<?php if(isset($_POST['num2'])) echo htmlspecialchars($_POST['num2']); ?>">
         <br>
         <br>
 
