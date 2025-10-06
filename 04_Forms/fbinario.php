@@ -1,25 +1,32 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cambio de base</title>
+</head>
+<body>
 
-
-<h1> CONVERSOR BINARIO </h1>
-    <form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
-        <label for="dec">Numero Decimal:</label>
-        <input type="number" name="decimal">
-        <br>
-        <br>
-        <?php
-        include "otrasFunciones.php";
-        if($_SERVER["REQUEST_METHOD"] == "POST"){
-            resultado();
-        }
-        ?>
-        <br>
-        <br>
-        <button type="submit">Enviar</button>
-        <button type="reset">Borrar</button>
-        
-    </form>
-
+    <h1> CONVERSOR BINARIO </h1>
+        <form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
+            <label for="dec">Numero Decimal:</label>
+            <input type="number" name="decimal">
+            <br>
+            <br>
+            <?php
+            include "otrasFunciones.php";
+            if($_SERVER["REQUEST_METHOD"] == "POST"){
+                resultado();
+            }
+            ?>
+            <br>
+            <br>
+            <button type="submit">Enviar</button>
+            <button type="reset">Borrar</button>
+            
+        </form>
+</body>
+</html>
 <?php
 /*******************************FUNCIONES************************************ */
 function resultado(){

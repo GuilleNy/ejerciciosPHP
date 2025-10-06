@@ -1,6 +1,12 @@
-
-<h1> Calculadora </h1>
-<form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora</title>
+</head>
+<body>
+    <h1> Calculadora </h1>
+    <form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
         <label for="num1">Operando 1:</label>
         <input type="number" name="num1">
         <br>
@@ -19,7 +25,8 @@
         <button type="reset">Borrar</button>
         
     </form>
-
+</body>
+</html>
 <?php
 
 include "otrasFunciones.php";
