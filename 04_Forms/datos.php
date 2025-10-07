@@ -37,7 +37,7 @@ function resultado(){
         }
 
         if(empty($_POST['sexo'])){
-            echo "<p> Marcar un genero es obligatorio.</p>";
+            echo "<p> Marcar un 'Genero' es obligatorio.</p>";
             $enviar=false;
         }else{
             $genero=depurar($_POST['sexo']);
