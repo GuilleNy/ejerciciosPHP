@@ -57,23 +57,8 @@ resultado();
 function resultado(){
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        if (!file_exists("alumnos2.txt") || filesize("alumnos2.txt") == 0) {
-            crearFichero();
-        }
         recogerDatos();
     }
-}
-
-
-function crearFichero(){
-    $fichero = fopen("alumnos2.txt", "w" );
-    fwrite($fichero, str_pad("Nombre",8,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Apellido1",11,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Apellido2",11,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Fecha Nacimiento",18,"#",STR_PAD_RIGHT));
-    fwrite($fichero,"Localidad");
-    fwrite($fichero, "\n");
-    fclose($fichero);
 }
 
 function recogerDatos(){
@@ -84,22 +69,23 @@ function recogerDatos(){
     $fecha_Nac = date("d/m/Y", strtotime($fecha_Nac));
     $localid = depurar($_POST['localidad']);
 
-    agregarDatos($nombre, $apellido_1, $apellido_2, $fecha_Nac, $localid);
+    crearFichero($nombre, $apellido_1, $apellido_2, $fecha_Nac, $localid);
 }
 
 
-function agregarDatos($nombre, $apellido_1, $apellido_2, $fecha_Nac, $localid){
+function crearFichero($nombre, $apellido_1, $apellido_2, $fecha_Nac, $localid){
 
     $fichero = fopen("alumnos2.txt", "a+" );
 
-    fwrite($fichero, str_pad($nombre,8,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($apellido_1,11,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($apellido_2,11,"#",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($fecha_Nac,18,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($nombre,(strlen($nombre)+2),"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($apellido_1,(strlen($apellido_1)+2),"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($apellido_2,(strlen($apellido_2)+2),"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($fecha_Nac,(strlen($fecha_Nac)+2),"#",STR_PAD_RIGHT));
     fwrite($fichero, $localid);
     fwrite($fichero, "\n");
 
     fclose($fichero);
 }
+
 
 ?>

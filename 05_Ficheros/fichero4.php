@@ -1,16 +1,18 @@
 
 <?php
 /*
- programa php que muestre por pantalla el contenido del fichero alumnos1.txt
+programa php que muestre por pantalla el contenido del fichero alumnos2.txt
 como una tabla HTML. Se mostrará, después de los datos de los alumnos, un mensaje con el número de
-filas que se han leído del fichero
+filas que se han leído del fichero.
  */
 include "otrasFunciones.php";
+
+//no esta hecho falta hace cambios
 resultado();
 
 /*******************************FUNCIONES************************************ */
 function resultado(){
-    $f1 = fopen("alumnos1.txt","r");
+    $f1 = fopen("alumnos2.txt","r");
     echo "<table table border='1' style='border-collapse: collapse; width: 700px;'>";
     encabezado();
     while (!feof($f1)){  
