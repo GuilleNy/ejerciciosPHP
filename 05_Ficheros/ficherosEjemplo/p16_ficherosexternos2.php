@@ -9,7 +9,7 @@ $f1=fopen("quijote.txt","r");
 
 # Este bucle nos escribirá cada una de las lineas del fichero
 while(!feof($f1)){
-$z=fgets($f1,4000);
+$z=fgets($f1,20);
 echo $z,"<br>";
 }
 

@@ -1,0 +1,3 @@
+Nombre##Apellido1##Apellido2##Fecha Nacimiento##Localidad
+Raul####Niebla#####Pincay#####01/10/2025########Madrid
+Alex####Hernandez##Niebla#####19/10/2025########Madrid

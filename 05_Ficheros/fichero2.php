@@ -5,7 +5,7 @@
     <title>Ficheros</title>
 </head>
 <body>
-    <h1> Alumno 1</h1>
+    <h1> Alumno 2</h1>
     <form action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="POST">
         <label for="nombre">Nombre: </label>
         <input type="text" name="nombre" >
@@ -42,14 +42,10 @@
 <?php
 /*
 formulario que recoja los datos de alumnos y los almacene un fichero con
-nombre alumnos1.txt (una fila por alumno). Los campos del fichero estarán separados por posiciones:
-    Nombre: posición 1 a 40
-    Apellido1: posición 41 a 81
-    Apellido2: posición 82 a 123
-    Fecha Nacimiento: posición 124 a 133
-    Localidad: posición 134 a 160
-Las posiciones no ocupadas se completarán con espacios. 
-
+nombre alumnos2.txt (una fila por alumno). Los campos del fichero estarán separados utilizando como
+caracteres delimitadores ##
+    Nombre##Apellido1##Apellido2##Fecha Nacimiento##Localidad
+No se completarán con espacios los campos puesto que se separan por caracteres delimitadores. 
  */
 include "otrasFunciones.php";
 
@@ -61,7 +57,7 @@ resultado();
 function resultado(){
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
-        if (!file_exists("alumnos1.txt") || filesize("alumnos1.txt") == 0) {
+        if (!file_exists("alumnos2.txt") || filesize("alumnos2.txt") == 0) {
             crearFichero();
         }
         recogerDatos();
@@ -70,13 +66,12 @@ function resultado(){
 
 
 function crearFichero(){
-    $fichero = fopen("alumnos1.txt", "w" );
-
-    fwrite($fichero, str_pad("Nombre",40," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Apellido1",40," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Apellido2",42," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Fecha Nac",10," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad("Localidad",27," ",STR_PAD_RIGHT));
+    $fichero = fopen("alumnos2.txt", "w" );
+    fwrite($fichero, str_pad("Nombre",8,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad("Apellido1",11,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad("Apellido2",11,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad("Fecha Nacimiento",18,"#",STR_PAD_RIGHT));
+    fwrite($fichero,"Localidad");
     fwrite($fichero, "\n");
     fclose($fichero);
 }
@@ -95,22 +90,16 @@ function recogerDatos(){
 
 function agregarDatos($nombre, $apellido_1, $apellido_2, $fecha_Nac, $localid){
 
-    $fichero = fopen("alumnos1.txt", "a+" );
+    $fichero = fopen("alumnos2.txt", "a+" );
 
-    fwrite($fichero, str_pad($nombre,40," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($apellido_1,40," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($apellido_2,42," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($fecha_Nac,10," ",STR_PAD_RIGHT));
-    fwrite($fichero, str_pad($localid,27," ",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($nombre,8,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($apellido_1,11,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($apellido_2,11,"#",STR_PAD_RIGHT));
+    fwrite($fichero, str_pad($fecha_Nac,18,"#",STR_PAD_RIGHT));
+    fwrite($fichero, $localid);
     fwrite($fichero, "\n");
 
     fclose($fichero);
 }
-
-
-
-
-
-
 
 ?>
