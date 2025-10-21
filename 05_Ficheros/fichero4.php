@@ -13,20 +13,23 @@ resultado();
 /*******************************FUNCIONES************************************ */
 function resultado(){
     $f1 = fopen("alumnos2.txt","r");
+    $cont=0;
     echo "<table table border='1' style='border-collapse: collapse; width: 700px;'>";
     encabezado();
     while (!feof($f1)){  
         $datos=array();
         extraerDatos($datos, $f1);
         visualizarTabla($datos); 
-        /*
+        $cont++;
+        
         echo "<pre>";
         print_r($datos);
         echo "</pre>";
-        */
+        
     }
     fclose($f1);   
     echo "</table>";
+    echo "Numero de filas leidas son de: " . $cont ;
 }
 
 function encabezado(){
@@ -49,11 +52,39 @@ function visualizarTabla($datos){
 }
 
 function extraerDatos(&$datos, $f1){
-    $z=fgets($f1); //me da la primera fila de datos
-    $datos[0]=depurar(substr($z,0,40));
-    $datos[1]=depurar(substr($z,39,40));
-    $datos[2]=depurar(substr($z,80,42));
-    $datos[3]=depurar(substr($z,122,10));
-    $datos[4]=depurar(substr($z,132,27));
+    $cadena_fila=fgets($f1); //me da la primera fila de datos
+    $columnas=5;
+    $i=0;
+    $inicio=0;
+    
+    while($i< strlen($cadena_fila)){
+        while( $cadena_fila[$i] != "#"){
+            $i++;
+        }
+        
+        $cad=substr($cadena_fila,$inicio, $i);
+
+        
+        $datos[5-$columnas]=$cad;
+        
+
+       
+        if($i < strlen($cadena_fila) ){
+            echo "i longitud de la cadena: " . $i . "</br>";
+            $i=$i+2;
+            $inicio=$i;
+            $columnas--;
+            echo "i incrementado: " . $i . "</br>";
+            echo "inicio: " . $inicio . "</br>";
+            echo "Columnas: " . $columnas . "</br>";
+        } 
+        echo "++++++++++++++++++++++++++++++++++++++++++++++++++++</br> ";
+    }
+    
+   
+    
+    
+    
+  
 }
 ?>

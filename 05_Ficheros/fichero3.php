@@ -11,12 +11,14 @@ resultado();
 /*******************************FUNCIONES************************************ */
 function resultado(){
     $f1 = fopen("alumnos1.txt","r");
+    $cont=0;
     echo "<table table border='1' style='border-collapse: collapse; width: 700px;'>";
     encabezado();
     while (!feof($f1)){  
         $datos=array();
         extraerDatos($datos, $f1);
         visualizarTabla($datos); 
+        $cont++;
         /*
         echo "<pre>";
         print_r($datos);
@@ -25,6 +27,7 @@ function resultado(){
     }
     fclose($f1);   
     echo "</table>";
+    echo "Numero de filas leidas: " . $cont ;
 }
 
 function encabezado(){
