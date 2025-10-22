@@ -62,14 +62,15 @@ function recogerDatos(){
 }
 
 function mostrarFichero($name_fichero){
-    $lineas = file($name_fichero);
+    //el @ hace que no salga el warning en el navegador
+    $lineas = @file($name_fichero) or die ("No se encuentra el archivo");
     foreach ($lineas as $valor ) {
         echo $valor . "<br>";
     }
 }
 
 function mostrarLinea($numLinea, $nombreFichero){
-    $fichero=fopen($nombreFichero, "r");
+    $fichero=fopen($nombreFichero, "r") or die ("No se encuentra el archivo");
     $cont=1;
     while (!feof($fichero)) {
         $z=fgets($fichero);
@@ -82,7 +83,7 @@ function mostrarLinea($numLinea, $nombreFichero){
 }
 
 function mostrarPrimerasLineas($numLinea, $nombreFichero){
-    $fichero=fopen($nombreFichero, "r");
+    $fichero=fopen($nombreFichero, "r") or die ("No se encuentra el archivo");
     $cont=1;
     while (!feof($fichero)) {
         $z=fgets($fichero);
