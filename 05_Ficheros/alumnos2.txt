@@ -1,6 +1,2 @@
-Guillermo##Niebla##Pincay##04/09/2000##Madrid
-Ana##Garcia##Lopez##12/06/2001##Barcelona
-Luis##Fernandez##Martinez##23/11/2000##Sevilla
-Maria##Torres##Sanchez##15/02/2002##Valencia
-David##Rodriguez##Gomez##30/08/1999##Bilbao
-Laura##Morales##Jimenez##09/01/2001##Zaragoza
+Guillermo##Niebla##Pincay##02/10/2025##Madrid
+Roberto##Hernandez##garcia##01/10/2025##Madrid
