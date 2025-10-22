@@ -69,6 +69,7 @@ function mostrarFichero($name_fichero){
     }
 }
 
+//utilizar file() en lugar de fget, fgets, fgetc, con file() se puede utilizar explode() e implode().
 function mostrarLinea($numLinea, $nombreFichero){
     $fichero=fopen($nombreFichero, "r") or die ("No se encuentra el archivo");
     $cont=1;
