@@ -52,39 +52,21 @@ function visualizarTabla($datos){
 }
 
 function extraerDatos(&$datos, $f1){
-    $cadena_fila=fgets($f1); //me da la primera fila de datos
-    $columnas=5;
-    $i=0;
-    $inicio=0;
-    
-    while($i< strlen($cadena_fila)){
-        while( $cadena_fila[$i] != "#"){
-            $i++;
-        }
-        
-        $cad=substr($cadena_fila,$inicio, $i);
+    $f1=fgets($f1);
 
-        
-        $datos[5-$columnas]=$cad;
-        
-
-       
-        if($i < strlen($cadena_fila) ){
-            echo "i longitud de la cadena: " . $i . "</br>";
-            $i=$i+2;
-            $inicio=$i;
-            $columnas--;
-            echo "i incrementado: " . $i . "</br>";
-            echo "inicio: " . $inicio . "</br>";
-            echo "Columnas: " . $columnas . "</br>";
-        } 
-        echo "++++++++++++++++++++++++++++++++++++++++++++++++++++</br> ";
+     if($f1 != ""){
+        $indice = 0;
+        $datos[0] = depurar(substr($f1,0,strpos($f1,"##")));
+        $indice = strpos($f1,"##",$indice)+2;
+        $datos[1] = depurar(substr($f1,$indice,strpos($f1,"##",$indice)-$indice));
+        $indice = strpos($f1,"##",$indice)+2;
+        $datos[2] = depurar(substr($f1,$indice,strpos($f1,"##",$indice)-$indice));
+        $indice = strpos($f1,"##",$indice)+2;
+        $datos[3] = depurar(substr($f1,$indice,strpos($f1,"##",$indice)-$indice));
+        $indice = strpos($f1,"##",$indice)+2;
+        $datos[4] = depurar(substr($f1, $indice));
     }
-    
-   
-    
-    
-    
-  
 }
+
+
 ?>
