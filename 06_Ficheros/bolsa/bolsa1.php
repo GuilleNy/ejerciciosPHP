@@ -40,6 +40,7 @@ function mostrarFichero(){
     echo "</table>";
     */
 
+    //vamos a utilizar el explode
     echo $lineas[5];
     $cadena=explode(" ",$lineas[5]);
 
