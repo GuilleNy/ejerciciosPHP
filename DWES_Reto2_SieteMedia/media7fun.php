@@ -112,7 +112,6 @@ function calcularGanadores(&$arrayJugadores, &$arrayGanadores, &$arrayNoGanadore
             if($value == 7.5){
                 $arrayGanadores['ganadores'][$nombre][]=$value;
             }elseif($value < 7.5){
-                $dato['datos']['premio']=0;
                 $arrayGanadores['puntosCercanos'][$nombre][]=$value;
             }
         
@@ -125,9 +124,11 @@ function repartirPremio($arrayJugadores, $arrayGanadores){
 
     foreach ($arrayGanadores as $categ => $dato) {
         foreach ($dato as $nombre => $value) {
-            //if($dato[$categ][$nombre])
-        
-            //echo $value . "";
+            //if(!empty($dato[$categ]))
+
+            
+            //echo $dato[$categ];
+           
         }
     }
 
