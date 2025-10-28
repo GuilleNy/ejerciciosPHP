@@ -80,9 +80,6 @@ function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
             /*
             $indice=array_rand($arrayCartas); // me devuelve el indice random para luego por medio del indice extraer un valor
             $valor_carta=$arrayCartas[$indice];
-
-            
-            
             */
             $arrayJugadores[$nombre]['cartas'][]=$arrayCartas[$cont];
             unset($arrayCartas[$cont]); //elimino la carta del array
@@ -161,7 +158,6 @@ function crearFichero($arrayJugadores, $ganadores){
     $hora=date("H");
     $minutos=date("i");
     $segundos=date("s");
-
 
     $cadena="apuestas_" . $dia . $mes . $año . $hora . $minutos . $segundos . ".txt";
     
