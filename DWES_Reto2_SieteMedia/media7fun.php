@@ -45,6 +45,10 @@ function verificarCampos(){
     return $enviar;
 }
 
+function barajearCartas(&$arrayCartas){
+    shuffle($arrayCartas);
+}
+
 function recogerDatos(&$arrayJugadores){
 
     for ($i=0; $i < 4; $i++) { 
@@ -70,16 +74,18 @@ function visualizarTabla($arrayJugadores){
 
 function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
 
-
+    $cont=0;
     foreach ($arrayJugadores as $nombre => $dato) {
         for ($i=0; $i < $num_cartas; $i++) { 
+            /*
             $indice=array_rand($arrayCartas); // me devuelve el indice random para luego por medio del indice extraer un valor
             $valor_carta=$arrayCartas[$indice];
-            
-            $arrayJugadores[$nombre]['cartas'][]=$valor_carta;
 
             //elimino la carta del array
             unset($arrayCartas[$indice]);
+            */
+            $arrayJugadores[$nombre]['cartas'][]=$arrayCartas[$cont];
+            $cont++;
         }  
     }
     $arrayCartas = array_values($arrayCartas); //reindexo el arraycartas para que el indice se restablezca ya que al usar unset(se elimina el indice y el contenido.) 
@@ -186,7 +192,7 @@ function crearFichero($arrayJugadores, $ganadores){
     fclose($fichero);
 
 }
-
+//recorro el array de jugadores para poder sumar el total de los premios obtenidos.
 function sumaPremios($arrayJugadores){
     $premio=0;
     foreach ($arrayJugadores as $nombre => &$dato) {

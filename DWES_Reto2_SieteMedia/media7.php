@@ -22,6 +22,7 @@ function resultado(){
             
 
             /******************************************FUNCIONES**************************************************/
+            barajearCartas($arrayCartas);
             repartirCartas($arrayJugadores, $arrayCartas, $num_cartas);
             calcularPuntuacion($arrayJugadores);
             visualizarTabla($arrayJugadores);
@@ -35,7 +36,12 @@ function resultado(){
             echo "<pre>";
             print_r($arrayJugadores); 
             echo "</pre>";
+
             /*
+            echo "<pre>";
+            print_r($arrayCartas); 
+            echo "</pre>";
+            
             echo "<pre>";
             print_r($ganadores); // visualizo los jugadores
             echo "</pre>";
