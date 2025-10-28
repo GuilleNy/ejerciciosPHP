@@ -69,6 +69,8 @@ function visualizarTabla($arrayJugadores){
 }
 
 function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
+
+
     foreach ($arrayJugadores as $nombre => $dato) {
         for ($i=0; $i < $num_cartas; $i++) { 
             $indice=array_rand($arrayCartas); // me devuelve el indice random para luego por medio del indice extraer un valor
@@ -134,10 +136,8 @@ function calcularGanadores(&$arrayJugadores, &$ganadores,  $cant_apost, &$premio
         echo "Los ganadores han obtenido " . $premioPorPersona . " € de premio";
         crearFichero($arrayJugadores, $ganadores);
     }else{
-        echo "No hay ganadores.<br>";
-        
         $bote=$cant_apost;
-        echo "Cantidad agregada al bote: " . $bote;
+        echo "NO hay ganadores el bote acumulado es de "  .  $bote . ".<br>";
     }
 
     echo "<pre>";
@@ -162,9 +162,9 @@ function crearFichero($arrayJugadores, $ganadores){
 
     foreach ($arrayJugadores as $nombre => $dato) {
         $separar=explode(" ", $nombre);
-        $inicial_nom=substr($separar[0],0,1);
-        $inicial_apell=substr($separar[1],0,1);
-        $iniciales=$inicial_nom . $inicial_apell;
+        $inicial_nom=substr($separar[0],0,1); //extraigo el primer caracter del nombre
+        $inicial_apell=substr($separar[1],0,1);//extraigo el primer caracter del apellido
+        $iniciales=$inicial_nom . $inicial_apell; //los concateno
         $puntaje=$dato['datos']['puntos'];
         $premio=$dato['datos']['premio'];
 
