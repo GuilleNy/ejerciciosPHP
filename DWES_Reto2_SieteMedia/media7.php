@@ -25,8 +25,8 @@ function resultado(){
             barajearCartas($arrayCartas);
             repartirCartas($arrayJugadores, $arrayCartas, $num_cartas);
             calcularPuntuacion($arrayJugadores);
-            visualizarTabla($arrayJugadores);
             calcularGanadores($arrayJugadores, $ganadores, $cant_apost, $premioPorPersona, $bote);
+            visualizarTabla($arrayJugadores);
             /*****************************************************************************************************/
 
 
