@@ -59,7 +59,7 @@ function recogerDatos(&$arrayJugadores){
 }
 
 function visualizarTabla($arrayJugadores){
-    echo "<table style='width:40px;'>";
+    echo "<table border='1' style='width:40px;'>";
     foreach ($arrayJugadores as $nombre => $dato) {
         echo "<tr>"; 
         echo "<td > " . $nombre . "</td>";
