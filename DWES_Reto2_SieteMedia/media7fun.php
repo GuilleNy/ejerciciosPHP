@@ -82,11 +82,11 @@ function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
             $valor_carta=$arrayCartas[$indice];
             */
             $arrayJugadores[$nombre]['cartas'][]=$arrayCartas[$cont];
-            unset($arrayCartas[$cont]); //elimino la carta del array
+            //unset($arrayCartas[$cont]); //elimino la carta del array
             $cont++;
         }  
     }
-    $arrayCartas = array_values($arrayCartas); //reindexo el arraycartas para que el indice se restablezca ya que al usar unset(se elimina el indice y el contenido.) 
+    //$arrayCartas = array_values($arrayCartas); //reindexo el arraycartas para que el indice se restablezca ya que al usar unset(se elimina el indice y el contenido.) 
 }
 
 function calcularPuntuacion(&$arrayJugadores){
@@ -174,21 +174,43 @@ function crearFichero($arrayJugadores, $ganadores){
 
         //echo $inicial_nom . $inicial_apell . "<br>";
 
+        escribir($fichero, $iniciales);
+        escribir($fichero, $puntaje);
+        fwrite($fichero, $premio);
+        fwrite($fichero, "\n");
+
+        /*
         fwrite($fichero, str_pad($iniciales,(strlen($iniciales)+1),"#"));
         fwrite($fichero, str_pad($puntaje, (strlen($puntaje)+1),"#"));
         fwrite($fichero, $premio);
         fwrite($fichero, "\n");
+        */
     }
+    $z="TOTALPREMIOS";
     $cant_gand=count($ganadores);
     $totalPremio=sumaPremios($arrayJugadores);
 
-    fwrite($fichero, str_pad("TOTALPREMIOS",13,"#"));
+    
+    escribir($fichero, $z);
+    escribir($fichero, $cant_gand);
+    fwrite($fichero,$totalPremio);
+
+
+    /*
+    fwrite($fichero, str_pad("TOTALPREMIOS",(strlen($z)+1),"#"));
     fwrite($fichero, str_pad($cant_gand,(strlen($cant_gand)+1),"#"));
     fwrite($fichero,$totalPremio);
+    */
 
     fclose($fichero);
 
 }
+
+function escribir($fichero, $cadena){
+    fwrite($fichero, $cadena);
+    fwrite($fichero, "#");
+}
+
 //recorro el array de jugadores para poder sumar el total de los premios obtenidos.
 function sumaPremios($arrayJugadores){
     $premio=0;
