@@ -81,10 +81,11 @@ function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
             $indice=array_rand($arrayCartas); // me devuelve el indice random para luego por medio del indice extraer un valor
             $valor_carta=$arrayCartas[$indice];
 
-            //elimino la carta del array
-            unset($arrayCartas[$indice]);
+            
+            
             */
             $arrayJugadores[$nombre]['cartas'][]=$arrayCartas[$cont];
+            unset($arrayCartas[$cont]); //elimino la carta del array
             $cont++;
         }  
     }

@@ -37,11 +37,11 @@ function resultado(){
             print_r($arrayJugadores); 
             echo "</pre>";
 
-            /*
+            
             echo "<pre>";
             print_r($arrayCartas); 
             echo "</pre>";
-            
+            /*
             echo "<pre>";
             print_r($ganadores); // visualizo los jugadores
             echo "</pre>";
