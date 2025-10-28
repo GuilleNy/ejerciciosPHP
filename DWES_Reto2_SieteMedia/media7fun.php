@@ -137,6 +137,7 @@ function calcularGanadores(&$arrayJugadores, &$ganadores,  $cant_apost, &$premio
         crearFichero($arrayJugadores, $ganadores);
     }else{
         $bote=$cant_apost;
+        crearFichero($arrayJugadores, $ganadores);
         echo "NO hay ganadores el bote acumulado es de "  .  $bote . ".<br>";
     }
 
