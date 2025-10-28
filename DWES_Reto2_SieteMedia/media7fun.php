@@ -1,6 +1,4 @@
 <?php
-
-
 function depurar($cadena){
     $cadena=trim($cadena);
     $cadena=stripslashes($cadena);
@@ -45,7 +43,6 @@ function verificarCampos(){
     echo $mensaje;
 
     return $enviar;
-
 }
 
 function recogerDatos(&$arrayJugadores){
@@ -54,7 +51,6 @@ function recogerDatos(&$arrayJugadores){
         $jugador=depurar($_POST["nombre".($i+1)]);
         $arrayJugadores[$jugador]['cartas']=array(); //me creo un array para almacenar las cartas
         $arrayJugadores[$jugador]['datos']=array("puntos"=>0, "premio"=>0); // me creo otro array de los datos que tendra los puntos y premio.
-
     }
 }
 
@@ -75,7 +71,7 @@ function visualizarTabla($arrayJugadores){
 function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
     foreach ($arrayJugadores as $nombre => $dato) {
         for ($i=0; $i < $num_cartas; $i++) { 
-            $indice=array_rand($arrayCartas);
+            $indice=array_rand($arrayCartas); // me devuelve el indice random para luego por medio del indice extraer un valor
             $valor_carta=$arrayCartas[$indice];
             
             $arrayJugadores[$nombre]['cartas'][]=$valor_carta;
@@ -93,7 +89,7 @@ function calcularPuntuacion(&$arrayJugadores){
     foreach ($arrayJugadores as $nombre => &$dato) {
         foreach ($dato['cartas'] as $indice => $value) {
 
-            if(in_array($value[0],$cartNum)){
+            if(in_array($value[0],$cartNum)){ // extraigo el primer caracter de la cadena que seria el numero, y si ese numero se encuentra dentro del array $cartNum
                 $dato['datos']['puntos']+=intval($value[0]);
             }else{
                 $dato['datos']['puntos']+=0.5;
@@ -105,34 +101,97 @@ function calcularPuntuacion(&$arrayJugadores){
     }
 }
 
-function calcularGanadores(&$arrayJugadores, &$arrayGanadores, &$arrayNoGanadores){
+function calcularGanadores(&$arrayJugadores, &$ganadores,  $cant_apost, &$premioPorPersona, &$bote){
 
+    $arrayGanadores=array();
     foreach ($arrayJugadores as $nombre => &$dato) {
-        foreach ($dato['datos'] as $indice => $value) {
-            if($value == 7.5){
-                $arrayGanadores['ganadores'][$nombre][]=$value;
-            }elseif($value < 7.5){
-                $arrayGanadores['puntosCercanos'][$nombre][]=$value;
-            }
-        
-            echo $value . "";
+        $punto=$dato['datos']['puntos'];
+        if($punto <= 7.5){
+            $arrayGanadores[$nombre]=$punto;
         }
     }
+
+    if(!empty($arrayGanadores)){
+        
+        $mayor=max($arrayGanadores); //busco el puntaje mayor del arrayGanadores
+        $ganadores=array_keys($arrayGanadores, $mayor); // luego array_keys le paso el array de ganadores y
+                                                        // tambien el numero mayor para que me devuelva el indice que
+                                                        // en este caso es el nombre del ganador o ganadores que en su 
+                                                        // valor tenga en puntaje maximo.
+        
+        foreach ($ganadores as $nombre ) {
+            echo  $nombre . " ha ganado la partida con una puntuacion de ". $mayor . "<br>";
+            
+            if($mayor == 7.5){
+                $arrayJugadores[$nombre]['datos']['premio']=( $cant_apost * 0.80) / count($ganadores);
+                $premioPorPersona= $arrayJugadores[$nombre]['datos']['premio'];
+            }else{
+                $arrayJugadores[$nombre]['datos']['premio']=( $cant_apost * 0.50) / count($ganadores);
+                $premioPorPersona= $arrayJugadores[$nombre]['datos']['premio'];
+            }
+        }
+
+        echo "Los ganadores han obtenido " . $premioPorPersona . " € de premio";
+        crearFichero($arrayJugadores, $ganadores);
+    }else{
+        echo "No hay ganadores.<br>";
+        
+        $bote=$cant_apost;
+        echo "Cantidad agregada al bote: " . $bote;
+    }
+
+    echo "<pre>";
+    print_r($arrayGanadores); // visualizo los jugadores
+    echo "</pre>";
 }
 
-function repartirPremio($arrayJugadores, $arrayGanadores){
+function crearFichero($arrayJugadores, $ganadores){
 
-    foreach ($arrayGanadores as $categ => $dato) {
-        foreach ($dato as $nombre => $value) {
-            //if(!empty($dato[$categ]))
+    $dia=date("d");
+    $mes=date("m");
+    $año=date("Y");
+    $hora=date("H");
+    $minutos=date("i");
+    $segundos=date("s");
 
-            
-            //echo $dato[$categ];
-           
-        }
+
+    $cadena="apuestas_" . $dia . $mes . $año . $hora . $minutos . $segundos . ".txt";
+    
+    //echo $cadena;
+    $fichero=fopen($cadena , "a+") or die ("No se encuentra el archivo");;
+
+    foreach ($arrayJugadores as $nombre => $dato) {
+        $separar=explode(" ", $nombre);
+        $inicial_nom=substr($separar[0],0,1);
+        $inicial_apell=substr($separar[1],0,1);
+        $iniciales=$inicial_nom . $inicial_apell;
+        $puntaje=$dato['datos']['puntos'];
+        $premio=$dato['datos']['premio'];
+
+        //echo $inicial_nom . $inicial_apell . "<br>";
+
+        fwrite($fichero, str_pad($iniciales,(strlen($iniciales)+1),"#"));
+        fwrite($fichero, str_pad($puntaje, (strlen($puntaje)+1),"#"));
+        fwrite($fichero, $premio);
+        fwrite($fichero, "\n");
     }
+    $cant_gand=count($ganadores);
+    $totalPremio=sumaPremios($arrayJugadores);
 
+    fwrite($fichero, str_pad("TOTALPREMIOS",13,"#"));
+    fwrite($fichero, str_pad($cant_gand,(strlen($cant_gand)+1),"#"));
+    fwrite($fichero,$totalPremio);
 
+    fclose($fichero);
+
+}
+
+function sumaPremios($arrayJugadores){
+    $premio=0;
+    foreach ($arrayJugadores as $nombre => &$dato) {
+        $premio+=$dato['datos']['premio'];
+    }
+    return $premio;
 }
 
 ?>
