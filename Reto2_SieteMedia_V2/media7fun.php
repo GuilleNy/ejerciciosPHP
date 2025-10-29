@@ -171,6 +171,7 @@ function crearFichero($arrayJuga_datos, $nombreGanadores){
         $separar=explode(" ", $nombre);
         $inicial_nom=substr($separar[0],0,1); //extraigo el primer caracter del nombre
         $inicial_apell=substr($separar[1],0,1);//extraigo el primer caracter del apellido
+        
         $iniciales=$inicial_nom . $inicial_apell; //los concateno
         $puntaje=$dato['puntos'];
         $premio=$dato['premio'];
