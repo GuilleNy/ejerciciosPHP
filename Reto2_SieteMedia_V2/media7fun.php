@@ -100,9 +100,6 @@ function calcularPuntuacion(&$arrayJugadores, &$arrayJuga_datos){
             }else{
                 $arrayJuga_datos[$nombre]['puntos']+=0.5;
             }
-
-            //echo $value[0] . "";
-            //echo $dato['datos']['puntos'] . "\n";
         }
     }
 }
@@ -122,9 +119,9 @@ function calcularGanadores(&$arrayJuga_datos,  $cant_apost, &$premioPorPersona, 
     if(!empty($array_jugadoresEnRango)){
         
         $mayor=max($array_jugadoresEnRango); //busco el puntaje mayor del array_jugadoresEnRango
-        $nombreGanadores=array_keys($array_jugadoresEnRango, $mayor); // luego array_keys le paso el array de nombreGanadores y
+        $nombreGanadores=array_keys($array_jugadoresEnRango, $mayor); // luego array_keys le paso el array de array_jugadoresEnRango y
                                                         // tambien el numero mayor para que me devuelva el indice que
-                                                        // en este caso es el nombre del ganador o ganadore que en su 
+                                                        // en este caso es el nombre del ganador o ganadores que en su 
                                                         // valor tenga en puntaje maximo.
         
         foreach ($nombreGanadores as $nombre ) {
