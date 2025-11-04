@@ -163,10 +163,17 @@ function visualizarTabla($arrayJugadores , $jugadasPoker){
 }
 
 function visualizarGandores($repartirPremioJuga){
+    $cont=0;
     foreach ($repartirPremioJuga as $nombre => $premio) {
         if($premio > 0){
             echo $nombre . " gana con una cantidad de: " . $premio . "<br>";
-        }  
+        }else{
+            $cont++;
+        }
+    }
+
+    if($cont == 4){
+        echo "No hay ganadores";
     }
 }
 
