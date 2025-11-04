@@ -6,9 +6,9 @@
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(verificarCampos()){
-            $arrayJugadores=array();
-            $jugadasPoker=array();
-            $repartirPremioJuga=array(); 
+            $arrayJugadores=array(); //array asociativo para almacenar los jugadores y sus cartas
+            $jugadasPoker=array(); //array asociativo para almacenar la jugada(poker, trio, doble pareja, pareja) de cada jugador .
+            $repartirPremioJuga=array(); //array asociativo para almacenar el premio que le corresponde a cada jugador.
             $arrayCartas=array("1C1","1C2","1D1","1D2","1P1","1P2","1T1","1T2", "JC1","JC2","JD1","JD2", "JP1","JP2","JT1","JT2", "KC1","KC2","KD1","KD2", "KP1","KP2","KT1","KT2", "QC1","QC2","QD1","QD2", "QP1","QP2","QT1","QT2");
 
             /*************************************RECOLECCION DE DATOS********************************************/
@@ -40,7 +40,7 @@
             echo "</pre>";
             */
             echo "<pre>";
-            print_r($repartirPremioJuga); 
+            print_r($jugadasPoker); 
             echo "</pre>";
             
         }

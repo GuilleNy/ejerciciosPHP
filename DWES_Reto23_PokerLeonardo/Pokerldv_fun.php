@@ -41,6 +41,9 @@ function verificarCampos(){
     return $enviar;
 }
 
+//Funcion para recoger los datos de los jugadores y almacenarlos en un array asociativo, 
+//donde la clave es el nombre del jugador y el valor es un array vacio para almacenar las cartas.
+//Tambien creo otro array asociativo para almacenar el premio que le corresponde a cada jugador.
 function recogerDatos(&$arrayJugadores , &$repartirPremioJuga){
 
     for ($i=0; $i < 4; $i++) { 
@@ -50,10 +53,13 @@ function recogerDatos(&$arrayJugadores , &$repartirPremioJuga){
     }
 }
 
+//Funcion para barajear las cartas
 function barajearCartas(&$arrayCartas){
     shuffle($arrayCartas);
 }
 
+//Funcion para repartir las cartas a los jugadores, donde el numero de cartas a repartir es pasado por parametro
+// y se reparte de forma equitativa entre los jugadores.
 function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
 
     $cont=0;
@@ -65,6 +71,8 @@ function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
     }
 }
 
+//Funcion para verificar las combinaciones de las cartas de cada jugador
+// y almacenar la jugada en un array asociativo donde la clave es el nombre del jugador y el valor es la jugada.
 function verificarCombinaciones($arrayJugadores, &$jugadasPoker){
     $valorFacial=verificarCartas($arrayJugadores);
 
@@ -94,6 +102,8 @@ function verificarCombinaciones($arrayJugadores, &$jugadasPoker){
     */
 }
 
+//Funcion para verificar las cartas de cada jugador y devolver un array asociativo
+// donde la clave es el nombre del jugador y el valor es un array con los valores faciales de sus cartas.
 function verificarCartas($arrayJugadores){
     $valorFacial=array();
     foreach ($arrayJugadores as $nombre => $cartas) {
@@ -105,14 +115,15 @@ function verificarCartas($arrayJugadores){
     return $valorFacial;
 }
 
+//Funcion para determinar los ganadores y repartir el premio segun la jugada realizada
+// el premio se reparte en funcion de la jugada realizada y el numero de ganadores.
 function ganadores($jugadasPoker, &$repartirPremioJuga, $cant_apost){
     
-    //$orden=array("Poker" => 4 ,"Trio"  => 3,"Doble Pareja"  => 2 ,"Pareja"  => 1);
     $orden=array("Pareja" => 0 ,"Doble Pareja"  => 1,"Trio"  => 2 ,"Poker"  => 3);
-    $invertirOrden=array_keys($orden);
-    $arrayJuga=array();
+    $invertirOrden=array_keys($orden); //array para invertir el orden y obtener el nombre de la jugada a partir del numero.
+    $arrayJuga=array(); //array temporal para almacenar las jugadas con su numero de jugada.
 
-    //lo que hago aqui es clasificar las jugadas ubicando su numero de juagda y luego agregar a los jugadores
+    //lo que hago aqui es clasificar las jugadas ubicando su numero de jugada y luego agregar a los jugadores
     //en lugar de que la clave sea el nombre de la jugada lo sustituyo por un numero del array $orden
     foreach ($jugadasPoker as $nombre => $jugada) {
         if($jugada != "No hay combinacion"){
@@ -120,13 +131,13 @@ function ganadores($jugadasPoker, &$repartirPremioJuga, $cant_apost){
         }  
     }
 
-    $mayor=max($arrayJuga);
-    $ganadores=array_keys($arrayJuga,$mayor); //array definitivo de ganadores.
+    $mayor=max($arrayJuga); //obtengo el mayor valor de jugada realizada 
+    $ganadores=array_keys($arrayJuga,$mayor); //obtengo los nombres de los jugadores que han realizado la jugada mayor 
 
 
     foreach ($ganadores as $indice => $nombre) {
         if($invertirOrden[$mayor]  == "Poker"){
-            $repartirPremioJuga[$nombre]=  $cant_apost / count($ganadores);
+            $repartirPremioJuga[$nombre]=  $cant_apost / count($ganadores); 
         }elseif($invertirOrden[$mayor]  == "Trio"){
             $repartirPremioJuga[$nombre]= ($cant_apost * 0.70) /count($ganadores) ;
         }
@@ -147,7 +158,8 @@ function ganadores($jugadasPoker, &$repartirPremioJuga, $cant_apost){
     */
 }
 
-
+//Funcion para visualizar la tabla de jugadores con sus cartas y la jugada realizada
+// se muestra en una tabla HTML con las cartas en imagenes.
 function visualizarTabla($arrayJugadores , $jugadasPoker){
     echo "<table border='1' style='width:40px;'>";
     foreach ($arrayJugadores as $nombre => $dato) {
@@ -162,6 +174,8 @@ function visualizarTabla($arrayJugadores , $jugadasPoker){
     echo "</table>";
 }
 
+//Funcion para visualizar los ganadores y la cantidad que han ganado 
+// si no hay ganadores se indica.
 function visualizarGandores($repartirPremioJuga){
     $cont=0;
     foreach ($repartirPremioJuga as $nombre => $premio) {
