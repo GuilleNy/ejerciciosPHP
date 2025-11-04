@@ -73,7 +73,7 @@ function repartirCartas(&$arrayJugadores, &$arrayCartas, $num_cartas){
 
 //Funcion para verificar las combinaciones de las cartas de cada jugador
 // y almacenar la jugada en un array asociativo donde la clave es el nombre del jugador y el valor es la jugada.
-function verificarCombinaciones($arrayJugadores, &$jugadasPoker){
+function clasificarJugadasPoker($arrayJugadores, &$jugadasPoker){
     $valorFacial=verificarCartas($arrayJugadores);
 
     foreach ($valorFacial as $nombre => $arrayValor) {
@@ -117,7 +117,7 @@ function verificarCartas($arrayJugadores){
 
 //Funcion para determinar los ganadores y repartir el premio segun la jugada realizada
 // el premio se reparte en funcion de la jugada realizada y el numero de ganadores.
-function ganadores($jugadasPoker, &$repartirPremioJuga, $cant_apost){
+function determinarYRepartirPremios($jugadasPoker, &$repartirPremioJuga, $cant_apost){
     
     $orden=array("Pareja" => 0 ,"Doble Pareja"  => 1,"Trio"  => 2 ,"Poker"  => 3);
     $invertirOrden=array_keys($orden); //array para invertir el orden y obtener el nombre de la jugada a partir del numero.

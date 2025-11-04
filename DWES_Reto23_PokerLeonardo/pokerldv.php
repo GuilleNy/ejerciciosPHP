@@ -2,8 +2,6 @@
 
     include "Pokerldv_fun.php";
 
-
-
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(verificarCampos()){
             $arrayJugadores=array(); //array asociativo para almacenar los jugadores y sus cartas
@@ -21,9 +19,8 @@
             
             barajearCartas($arrayCartas);
             repartirCartas($arrayJugadores, $arrayCartas, $num_cartas);
-            verificarCartas($arrayJugadores);
-            verificarCombinaciones($arrayJugadores, $jugadasPoker);
-            ganadores($jugadasPoker,$repartirPremioJuga, $cant_apost);
+            clasificarJugadasPoker($arrayJugadores, $jugadasPoker);
+            determinarYRepartirPremios($jugadasPoker,$repartirPremioJuga, $cant_apost);
             visualizarTabla($arrayJugadores, $jugadasPoker);
             visualizarGandores($repartirPremioJuga);
             /*****************************************************************************************************/
