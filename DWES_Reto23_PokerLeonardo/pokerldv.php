@@ -1,6 +1,6 @@
 <?php
 
-    include "Pokerldv_fun.php";
+    include "pokerldv_fun.php";
 
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         if(verificarCampos()){
