@@ -86,12 +86,12 @@ function verificarCombinaciones($arrayJugadores, &$jugadasPoker){
             }
         }
     }
-    /*
+    
     echo "Array valor Facial";
     echo "<pre>";
     print_r($valorFacial); 
     echo "</pre>";
-    */
+    
 }
 
 function verificarCartas($arrayJugadores){
