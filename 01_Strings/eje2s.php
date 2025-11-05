@@ -16,7 +16,7 @@ $ip2="10.33.161.2";
 
 
 function convertirBinario($ip){
-    $ipBinario="";
+    $ipBinario=" ";
     $array=explode('.', $ip);
 
     for ($i=0; $i < count($array) ; $i++) {
@@ -39,8 +39,8 @@ function numBinario($num){
         $ipBin=$resto . $ipBin;
         $num=intdiv($num, 2);
     }
-    $ipBin=str_pad($ipBin,8,0,STR_PAD_LEFT);
-    //echo $ipBin;
+    //$ipBin=str_pad($ipBin,8,0,STR_PAD_LEFT);
+    echo $ipBin . " ";
     return $ipBin;
 }
 
