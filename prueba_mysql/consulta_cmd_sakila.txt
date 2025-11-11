@@ -1,0 +1,22 @@
+select title 
+from film , film_actor , actor 
+where film.film_id=film_actor.film_id 
+and film_actor.actor_id=actor.actor_id 
+and actor.first_name='PENELOPE' 
+and actor.last_name='GUINESS';
+
+
+
+
+
+select title , category.name
+from film , film_actor , actor , film_category, category
+where film.film_id=film_actor.film_id 
+and film_actor.actor_id=actor.actor_id
+
+and film.film_id=film_category.film_id
+and film_category.category_id=category.category_id
+
+and actor.first_name='PENELOPE' 
+and actor.last_name='GUINESS';
+
