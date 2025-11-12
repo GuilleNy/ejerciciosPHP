@@ -20,3 +20,129 @@ and film_category.category_id=category.category_id
 and actor.first_name='PENELOPE' 
 and actor.last_name='GUINESS';
 
+
+
+
+
+select first_name, last_name , email 
+from customer , city , address
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city='Valencia';
+
+
+
+select first_name, last_name , email , postal_code, phone, address
+from customer , city , address , country
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city.country_id=country.country_id
+and country='Argentina';
+
+
+select count(customer_id) 'clientes'
+from customer;
+
+
+-Cuantos clientes hay en Argentina.
+
+select count(customer_id) 'clientes'
+from customer , address , city, country
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city.country_id=country.country_id
+and country='Argentina';
+
+
+-Cuantos clientes hay en cada pais.
+#select country , count(*) as num_clientes 
+select country , count(customer_id) 
+from customer , address , city, country
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city.country_id=country.country_id
+group by country;
+
+- Lo mismo que lo anterior pero ordenado ascendentemente
+select country , count(*) as num_clientes
+from customer , address , city, country
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city.country_id=country.country_id
+group by country
+order by num_clientes DESC;
+
+-Lo mismo que el anterior pero teniendo mas de 30 clientes
+
+select country , count(*) as num_clientes
+from customer , address , city, country
+where customer.address_id=address.address_id 
+and address.city_id=city.city_id
+and city.country_id=country.country_id
+group by country
+#having count(*)>30
+HAVING num_clientes > 30
+order by num_clientes DESC;
+
+
+- Titulos de peliculas con lenguaje mandarin
+select title
+from film, language
+where film.language_id=language.language_id
+and name='Mandarin';
+
+-Titulos peliculas categorias children o comedy
+
+select title
+from film, film_category , category
+where film.film_id=film_category.film_id
+and film_category.category_id=category.category_id
+and (name='Children' or name='Comdey');
+
+-Cuantas peliculas categorias Family?
+
+select count(title) as num_categoria
+from film, film_category , category
+where film.film_id=film_category.film_id
+and film_category.category_id=category.category_id
+and name='Family';
+
+-Numero peliculas de cada categoria.
+
+select name , count(title) as num_categoria
+from film, film_category , category
+where film.film_id=film_category.film_id
+and film_category.category_id=category.category_id
+group by name;
+
+-Mostrar categorias con mas de 20 peliculas
+
+select name , count(title) as num_categoria
+from film, film_category , category
+where film.film_id=film_category.film_id
+and film_category.category_id=category.category_id
+group by name
+having num_categoria > 20;
+
+- Datos de la pelicula de mayor duracion (length)
+
+select title , rental_duration, rental_rate , release_year , length 
+from film
+where length=(select max(length) from film);
+
+
+-Datos de los actores que han realizado mas de 10 peliculas
+
+select first_name, last_name, count(title) 'numero'
+from film , film_actor, actor
+where actor.actor_id=film_actor.actor_id 
+and film.film_id=film_actor.film_id
+group by first_name
+having count(title) > 10;
+
+- Idioma con mas peliculas rodadas
+
+select language.name , count(title) 'numero'
+from language , film
+where language.language_id=film.language_id
+group by language.name;
