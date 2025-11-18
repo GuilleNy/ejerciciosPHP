@@ -1,5 +1,4 @@
 <?php
-include_once "db/BBDD_empaltadpto.php";
 
 function obtenerCategorias(){
     $conn = conexion_BBDD();

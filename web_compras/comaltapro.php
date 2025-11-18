@@ -31,7 +31,7 @@ include_once "db/BBDD_empaltadpto.php";
 
                     <div class="form-group">
                         Precio:
-                        <input type="number" name="precio" placeholder="Precio" class="form-control" min="0" style="width:100px;">
+                        <input type="number" name="precio" placeholder="Precio" class="form-control" step="0.01" min="0" style="width:100px;">
                     </div>
 
                     <div class="form-group">
