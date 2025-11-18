@@ -14,12 +14,12 @@ include_once "db/BBDD_empaltadpto.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Consulta de Stock</title>
+    <title>Consulta de Almacenes</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 class="text-center">Consulta de Stock</h1>
+    <h1 class="text-center">Consulta de Almacenes</h1>
 
     <div class="container">
         <!--Aplicacion-->
@@ -28,15 +28,15 @@ include_once "db/BBDD_empaltadpto.php";
                 <form id="product-form"  action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
 
                     <div class="form-group">
-                        <label for="producto">Producto:</label>
-                        <select name="producto" class="form-control">
+                        <label for="almacen">Almacen:</label>
+                        <select name="almacen" class="form-control">
 
-                            <option value="" disabled selected>-- Selecciona un Producto --</option>
+                            <option value="" disabled selected>-- Selecciona un Almacen --</option>
                             <?php
                                 include_once "consultas_db.php";
-                                $producto= obtenerProductos();
-                                foreach ($producto as $fila) {
-                                    echo "<option value=\"" . $fila['ID_PRODUCTO'] . "\">" . $fila['NOMBRE'] . "</option>";
+                                $almacenes= obtenerAlmacenes();
+                                foreach ($almacenes as $fila) {
+                                    echo "<option value=\"" . $fila['NUM_ALMACEN'] . "\">" . $fila['LOCALIDAD'] . "</option>";
                                 }
                             ?>
                         </select>
@@ -67,7 +67,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
        
     if (verifica_campo()) {
         
-       visualizarTabla();
+       visualizarAlmacenes();
     }         
 }
 
@@ -76,7 +76,7 @@ function verifica_campo(){
     $enviar = True;  
 
 
-    if(!isset($_POST['producto'])){
+    if(!isset($_POST['almacen'])){
         $mensaje .= "No se ha seleccionado una Producto.";
         $enviar = False; 
     }
@@ -84,21 +84,21 @@ function verifica_campo(){
     return $enviar;
 }
 
-function visualizarTabla(){
+function visualizarAlmacenes(){
 
-    $cod_prod = depurar($_POST['producto']);
-    $all_stock = obtenerStockProducto($cod_prod);
+    $numAlm = depurar($_POST['almacen']);
+    $all_stock = obtenerStockProducto($numAlm);
 
     echo "<table class='table table-striped w-50 mx-auto'>";
         echo "<tr>
-                <th>Localidad</th>
+                <th>Producto</th>
                 <th>Cantidad</th>
               </tr>";
 
         // Recorrer filas
         foreach ($all_stock as $fila) {
             echo "<tr>";
-            echo "<td>" . $fila['LOCALIDAD'] . "</td>";
+            echo "<td>" . $fila['NOMBRE'] . "</td>";
             echo "<td>" . $fila['CANTIDAD'] . "</td>";
             echo "</tr>";
         }
@@ -108,14 +108,14 @@ function visualizarTabla(){
 
 
 
-function obtenerStockProducto($cod_prod){
+function obtenerStockProducto($numAlm){
     $conn = conexion_BBDD();
     try{    
-        $stmt = $conn->prepare("SELECT LOCALIDAD , CANTIDAD  
-                                FROM almacen, almacena
-                                WHERE almacen.num_almacen=almacena.num_almacen
-                                AND id_producto = :idProd");
-        $stmt->bindParam(':idProd', $cod_prod);
+        $stmt = $conn->prepare("SELECT NOMBRE , CANTIDAD  
+                                FROM producto, almacena
+                                WHERE almacena.id_producto=producto.id_producto
+                                AND  num_almacen = :numAlm");
+        $stmt->bindParam(':numAlm', $numAlm);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $all_productos=$stmt->fetchAll();

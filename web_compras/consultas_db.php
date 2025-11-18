@@ -45,5 +45,22 @@ function obtenerProductos(){
     return $all_productos;
 }
 
+function obtenerClientes(){
+    $conn = conexion_BBDD();
+    try{    
+        $stmt = $conn->prepare("SELECT NIF , NOMBRE  FROM cliente");
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $all_clientes=$stmt->fetchAll();
+    }catch(PDOException $e)
+        {
+            echo "Error: " . $e->getMessage();
+        }
+
+    return $all_clientes;
+
+
+}
+
 
 ?>
