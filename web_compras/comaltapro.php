@@ -1,6 +1,6 @@
 <?php
 include "otras_funciones.php";
-include "db/BBDD_empaltadpto.php";
+include_once "db/BBDD_empaltadpto.php";
 ?>
 
 
@@ -22,7 +22,7 @@ include "db/BBDD_empaltadpto.php";
         <!--Aplicacion-->
         <div class="card border-success mb-3 mx-auto" style="max-width: 20rem;">
             <div class="card-body">
-                <form id="product-form" name="poker" action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
+                <form id="product-form"  action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
 
                     <div class="form-group">
                         Producto:
