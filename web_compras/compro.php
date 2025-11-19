@@ -123,7 +123,7 @@ function registrarCompra(){
     $numAlm = depurar($_POST['localidad']);
     $unidadesProd = verificarCantProd($idProducto, $numAlm);
 
-    if(intval($unidadesProd['CANTIDAD']) < 0){
+    if(intval($unidadesProd) < 0){
         $cantFinal = $unidadesProd - 1;
 
 
@@ -148,7 +148,7 @@ function verificarCantProd($idProducto, $numAlm){
 
     $conn = conexion_BBDD();
      try{    
-        $stmt = $conn->prepare("SELECT ID_PRODUCTO, CANTIDAD  
+        $stmt = $conn->prepare("SELECT CANTIDAD  
                                 FROM almacena 
                                 WHERE ID_PRODUCTO = :idProd
                                 AND NUM_ALMACEN = :numAlm");
@@ -156,7 +156,7 @@ function verificarCantProd($idProducto, $numAlm){
         $stmt->bindParam(':numAlm', $numAlm);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $datos=$stmt->fetchAll();
+        $datos=$stmt->fetch();
 
         if(empty($datos)){
             echo "No existe este producto en el almacen indicado. ";
@@ -167,7 +167,7 @@ function verificarCantProd($idProducto, $numAlm){
         {
             echo "Error: " . $e->getMessage();
         }
-    return $datos;
+    return $datos['CANTIDAD'];
 
 
 }
