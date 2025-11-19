@@ -125,7 +125,7 @@ function obtenerStockProducto($cod_prod){
         }
 
     return $all_productos;
-}
+  }
 
 
 ?>

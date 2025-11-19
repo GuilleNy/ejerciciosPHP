@@ -52,6 +52,19 @@ include_once "consultas_db.php";
                             ?>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="localidad">Localidad:</label>
+                        <select name="localidad" class="form-control">
+                            <option value="" disabled selected>-- Selecciona la Localidad --</option>
+                            <?php
+                                $almacenes= obtenerAlmacenes();
+                                foreach ($almacenes as $fila) {
+                                    echo "<option value=\"" . $fila['NUM_ALMACEN'] . "\">" . $fila['LOCALIDAD'] . "</option>";
+                                }
+                            ?>
+                        </select>
+                    </div>
                             
                    
                     
@@ -74,11 +87,8 @@ include_once "consultas_db.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
        
     if (verifica_campo()) {
-        if(validadNIF()){
+        registrarCompra();
 
-            registrarCliente();
-
-        }
     }         
 }
 
@@ -94,11 +104,72 @@ function verifica_campo(){
         $mensaje .= "No se ha seleccionado un Producto.<br>";
         $enviar = False; 
     }    
-   
-    
+
+    if(!isset($_POST['localidad'])){
+        $mensaje .= "No se ha seleccionado la Localidad.<br>";
+        $enviar = False; 
+    }  
+
     echo $mensaje;
     return $enviar;
 }
 
+function registrarCompra(){
+    $conn = conexion_BBDD();
+
+    $nif = depurar($_POST['cliente']);
+    $idProducto = depurar($_POST['producto']);
+    $fecha = date("Y-m-d");
+    $numAlm = depurar($_POST['localidad']);
+    $unidadesProd = verificarCantProd($idProducto, $numAlm);
+
+    if(intval($unidadesProd['CANTIDAD']) < 0){
+        $cantFinal = $unidadesProd - 1;
+
+
+        $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
+        $stmt->bindParam(':nifCli', $nif);
+        $stmt->bindParam(':id_producto', $idProducto);
+        $stmt->bindParam(':fechaCompra', $fecha);
+        $stmt->bindParam(':unidades', $cantFinal);
+        
+        if($stmt->execute()){
+            echo "Se ha completado la compra.";
+        }
+    }else{
+         echo "No hay suficientes unidades del producto seleccionado en el almacén elegido.";
+    }
+
+   
+
+}
+
+function verificarCantProd($idProducto, $numAlm){
+
+    $conn = conexion_BBDD();
+     try{    
+        $stmt = $conn->prepare("SELECT ID_PRODUCTO, CANTIDAD  
+                                FROM almacena 
+                                WHERE ID_PRODUCTO = :idProd
+                                AND NUM_ALMACEN = :numAlm");
+        $stmt->bindParam(':idProd', $idProducto);
+        $stmt->bindParam(':numAlm', $numAlm);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $datos=$stmt->fetchAll();
+
+        if(empty($datos)){
+            echo "No existe este producto en el almacen indicado. ";
+        }
+
+        
+    }catch(PDOException $e)
+        {
+            echo "Error: " . $e->getMessage();
+        }
+    return $datos;
+
+
+}
 
 ?>
