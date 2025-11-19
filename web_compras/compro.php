@@ -53,10 +53,7 @@ include_once "consultas_db.php";
                         </select>
                     </div>
                             
-                    <div class="form-group">
-                        Cantidad:
-                        <input type="number" name="cantidad"  class="form-control"  min="0" style="width:70px;">
-                    </div>
+                   
                     
 
                     <input type="submit" name="submit" value="Comprar" class="btn btn-warning">
@@ -97,10 +94,7 @@ function verifica_campo(){
         $mensaje .= "No se ha seleccionado un Producto.<br>";
         $enviar = False; 
     }    
-    if (empty($_POST['cantidad'])) {
-        $mensaje .= "El campo Cantidad esta vacio. <br>";
-        $enviar = False;  
-    }
+   
     
     echo $mensaje;
     return $enviar;
