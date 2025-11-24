@@ -112,39 +112,55 @@ function verifica_campo(){
 }
 
 function registrarCompra(){
-    $conn = conexion_BBDD();
 
-    $nif = depurar($_POST['cliente']);
-    $idProducto = depurar($_POST['producto']);
-    $fecha = date("Y-m-d");
-    $numAlm = depurar($_POST['localidad']);
-    $unidadesProd = intval(verificarCantProd($conn, $idProducto, $numAlm));
-    //echo $unidadesProd;
+    try{
+        $conn = conexion_BBDD();
 
-    if($unidadesProd > 0){
-        if(verificarDuplicado($conn, $nif , $idProducto , $fecha)){ // True si hay duplicado de fecha entonces actualizo la cantidad de Unidades del mismo cliente , del mismo producto de la misma fecha.
-            actualizarCantCompra($conn, $nif , $idProducto , $fecha);   // Actualizo la cantidad de unidades en la tabla compra
-            actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd); // Actualizo la cantidad de unidades en la tabla almacena
-            echo "Se ha completado la compra.";
+        $conn->beginTransaction();
+
+        $nif = depurar($_POST['cliente']);
+        $idProducto = depurar($_POST['producto']);
+        $fecha = date("Y-m-d");
+        $numAlm = depurar($_POST['localidad']);
+        $unidadesProd = intval(verificarCantProd($conn, $idProducto, $numAlm));
+        //echo $unidadesProd;
+
+        if($unidadesProd > 0){
+            if(verificarDuplicado($conn, $nif , $idProducto , $fecha)){ // True si hay duplicado de fecha entonces actualizo la cantidad de Unidades del mismo cliente , del mismo producto de la misma fecha.
+                actualizarCantCompra($conn, $nif , $idProducto , $fecha);   // Actualizo la cantidad de unidades en la tabla compra
+                actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd); // Actualizo la cantidad de unidades en la tabla almacena
+                echo "Se ha completado la compra.";
+                
+            }else{
+                $cantFinal = 1;
+
+                $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
+                $stmt->bindParam(':nifCli', $nif);
+                $stmt->bindParam(':id_producto', $idProducto);
+                $stmt->bindParam(':fechaCompra', $fecha);
+                $stmt->bindParam(':unidades', $cantFinal);
+                
+                if($stmt->execute()){
+                    actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd);
+                    echo "Se ha completado la compra.";
+                }
+            }
             
         }else{
-            $cantFinal = 1;
-
-            $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
-            $stmt->bindParam(':nifCli', $nif);
-            $stmt->bindParam(':id_producto', $idProducto);
-            $stmt->bindParam(':fechaCompra', $fecha);
-            $stmt->bindParam(':unidades', $cantFinal);
-            
-            if($stmt->execute()){
-                actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd);
-                echo "Se ha completado la compra.";
-            }
+            echo "No hay suficientes unidades del producto seleccionado en el almacén elegido.<br>";
         }
-        
-    }else{
-         echo "No hay suficientes unidades del producto seleccionado en el almacén elegido.<br>";
-    }
+
+
+    $conn->commit();//importante para realizar cualquier accion de modificacion.
+
+    }catch(PDOException $e)
+        {
+            if ($conn->inTransaction()) {
+                $conn->rollBack(); 
+            }
+            echo "Error: " . $e->getMessage();
+        }
+
 }
 
 //Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto.

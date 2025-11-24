@@ -69,7 +69,7 @@ function verifica_campo(){
 function alta_almacen(){
     try{
         $conn = conexion_BBDD();
-        $conn->beginTransaction();
+        $conn->beginTransaction(); //A partir de este punto habra operaciones de INSERT, UPDATE , DELETE.
 
         $localidad = depurar($_POST['localidad']);
         $num_alma = obtenerUltimoCodigo($conn);
