@@ -15,6 +15,21 @@ function obtenerDpto(){
     return $all_dpto;
 }
 
+function obtenerEmpleados(){
+    $conn = conexion_BBDD();
+    try{    
+        $stmt = $conn->prepare("SELECT dni  FROM empleado");
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $all_emp=$stmt->fetchAll();
+    }catch(PDOException $e)
+        {
+            echo "Error: " . $e->getMessage();
+        }
+
+    return $all_emp;
+}
+
 
 
 ?>
