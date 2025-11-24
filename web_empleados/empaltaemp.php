@@ -164,7 +164,7 @@ function registrarEmp(){
             echo "Cliente ya registrado";
         }
         */
-        $conn->commit();//importante para realizar cualquier accion de modificacion.
+        $conn->commit();//importante para realizar cualquier accioon de modificacion.
 
     }catch(PDOException $e)
         {
@@ -172,8 +172,11 @@ function registrarEmp(){
                 $conn->rollBack(); 
             }
             echo "Error: " . $e->getMessage();
-        }
 
+             // Código de error (SQLSTATE)
+            echo "Código de error: " . $e->getCode() . "<br>";
+        }
+    $conn = null;
 }
 
 function verificarCliente($dniEmp){
