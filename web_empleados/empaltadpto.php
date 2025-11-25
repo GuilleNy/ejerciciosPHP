@@ -50,10 +50,13 @@ function alta_dpto(){
 
     }catch(PDOException $e)
         {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
-            }
-            echo "Error: " . $e->getMessage();
+            
+            $conn->rollBack(); 
+            
+            echo "Error: " . $e->getMessage() . "<br>";
+
+             // Código de error (SQLSTATE)
+            echo "Código de error: " . $e->getCode() . "<br>";
         }
 
 }

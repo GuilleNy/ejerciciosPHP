@@ -169,9 +169,9 @@ function registrarEmp(){
 
     }catch(PDOException $e)
         {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
-            }
+            
+            $conn->rollBack(); 
+            
             echo "Error: " . $e->getMessage() . "<br>";
 
              // Código de error (SQLSTATE)

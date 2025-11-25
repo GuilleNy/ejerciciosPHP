@@ -59,10 +59,6 @@ include_once "db/BBDD_empaltadpto.php";
                         </select>
                     </div>
                     
-                    
-
-                  
-
                     <input type="submit" name="submit" value="Dar de Alta" class="btn btn-warning">
 
                 </form>
@@ -134,9 +130,8 @@ function cambiarDptoEmp(){
 
     }catch(PDOException $e)
         {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
-            }
+            $conn->rollBack(); 
+            
             echo "Error: " . $e->getMessage() . "<br>";
 
              // Código de error (SQLSTATE)
@@ -184,7 +179,8 @@ function insertarCambioDpto($conn , $dni , $cod_dpto, $fecha_ini){
 
     $fecha_fin = null;
 
-    $stmt = $conn->prepare("INSERT INTO emple_depart (dni , cod_dpto, fecha_ini, fecha_fin) VALUES (:dniEmp,:codDptoEmp, :fecha_ini, :fecha_fin)");
+    $stmt = $conn->prepare("INSERT INTO emple_depart (dni , cod_dpto, fecha_ini, fecha_fin) 
+                            VALUES (:dniEmp,:codDptoEmp, :fecha_ini, :fecha_fin)");
     $stmt->bindParam(':dniEmp', $dni);
     $stmt->bindParam(':codDptoEmp', $cod_dpto);
     $stmt->bindParam(':fecha_ini', $fecha_ini);
