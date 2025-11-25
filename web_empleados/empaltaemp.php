@@ -68,10 +68,6 @@ include_once "db/BBDD_empaltadpto.php";
                         </select>
                     </div>
                     
-                    
-
-                  
-
                     <input type="submit" name="submit" value="Dar de Alta" class="btn btn-warning">
 
                 </form>
@@ -146,7 +142,7 @@ function registrarEmp(){
         $cod_dpto = depurar($_POST['departamento']);
      
 
-        //$dato=verificarCliente($dni);
+        //$dato=verificarCliente(($conn, $dni);
         //if(empty($dato['dni'])){
             $stmt = $conn->prepare("INSERT INTO empleado (dni , nombre, apellidos, fecha_nac, salario) VALUES (:dniEmp,:nombreEmp, :apellidoEmp, :fechaNacEmp, :salarioEmp)");
             $stmt->bindParam(':dniEmp', $dni);
@@ -180,6 +176,7 @@ function registrarEmp(){
     $conn = null;
 }
 
+//Funcion que inserta el departamento del empleado con la fecha de inicio actual y la fecha fin a null.
 function insertarEmpleDpto($conn, $dni, $cod_dpto ){
     $fecha_ini = date("Y-m-d");
     $fecha_fin = null;
@@ -195,10 +192,9 @@ function insertarEmpleDpto($conn, $dni, $cod_dpto ){
     }
 }
 
-
-function verificarCliente($dniEmp){
-    $conn = conexion_BBDD();
-    try{    
+//Funcion que verifica si el empleado ya esta registrado en la base de datos.
+function verificarCliente($conn, $dniEmp){
+   
         $stmt = $conn->prepare("SELECT dni  
                                 FROM empleado 
                                 WHERE dni = :dniEmp");
@@ -206,11 +202,6 @@ function verificarCliente($dniEmp){
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $emp=$stmt->fetch();
-
-    }catch(PDOException $e)
-        {
-            echo "Error: " . $e->getMessage();
-        }
     return $emp;
 }
 

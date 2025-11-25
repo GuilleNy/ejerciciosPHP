@@ -7,18 +7,14 @@ include_once "db/BBDD_empaltadpto.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
        
     if (verifica_campo()) {
-        
 
-        alta_dpto();
-
-        
+        alta_dpto(); 
     }         
 }
 
 function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
-
 
     if (empty($_POST['nombre_dpto'])) {
         $mensaje .= "El campo Nombre Departament esta vacio. <br>";
@@ -45,12 +41,10 @@ function alta_dpto(){
             echo "Departamento " . $nombreDpto . " esta dado de alta.";
         }
 
-
         $conn->commit();
 
     }catch(PDOException $e)
         {
-            
             $conn->rollBack(); 
             
             echo "Error: " . $e->getMessage() . "<br>";
@@ -58,8 +52,10 @@ function alta_dpto(){
              // Código de error (SQLSTATE)
             echo "Código de error: " . $e->getCode() . "<br>";
         }
-
 }
+
+
+//Funcion que obtiene el ultimo codigo de departamento y le suma 1 para crear uno nuevo.
 function obtenerUltimoCodigo($conn){
 
     try{    

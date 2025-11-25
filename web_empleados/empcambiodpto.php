@@ -140,6 +140,7 @@ function cambiarDptoEmp(){
     $conn = null;
 }
 
+//Funcion que cierra el departamento actual del empleado seleccionado poniendo la fecha fin.
 function cerrarDptoActual( $conn, $dni, $cod_dpto, $fecha_fin){
     
     $stmt = $conn->prepare("UPDATE emple_depart
@@ -157,7 +158,7 @@ function cerrarDptoActual( $conn, $dni, $cod_dpto, $fecha_fin){
     }   
 
 }
-
+//Funcion que obtiene el codigo del departamento actual del empleado seleccionado para cambiar de departamento.
 function obtenerDptoActual($conn, $dni){
 
     $stmt = $conn->prepare("SELECT cod_dpto 
@@ -172,9 +173,7 @@ function obtenerDptoActual($conn, $dni){
     return $ultimoDpto;
 }
 
-
-
-//esta mal arreglarlo, me mete la fecha fin en la nuevo cambio de de dpto
+//Funcion que inserta el nuevo departamento del empleado seleccionado con la fecha de inicio y la fecha fin a null.
 function insertarCambioDpto($conn , $dni , $cod_dpto, $fecha_ini){
 
     $fecha_fin = null;
@@ -190,24 +189,6 @@ function insertarCambioDpto($conn , $dni , $cod_dpto, $fecha_ini){
         echo "Empleado ha cambiado de Departamento.";
         
     }
-}
-
-function verificarCliente($dniEmp){
-    $conn = conexion_BBDD();
-    try{    
-        $stmt = $conn->prepare("SELECT dni  
-                                FROM empleado 
-                                WHERE dni = :dniEmp");
-        $stmt->bindParam(':dniEmp', $dniEmp);                        
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $emp=$stmt->fetch();
-
-    }catch(PDOException $e)
-        {
-            echo "Error: " . $e->getMessage();
-        }
-    return $emp;
 }
 
 
