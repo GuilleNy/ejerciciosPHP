@@ -32,12 +32,30 @@ function alta_dpto(){
 
         $nombreDpto = depurar($_POST['nombre_dpto']);
         $cod_dpto = obtenerUltimoCodigo($conn);
+        $cod_dpto = "D003";
 
         $stmt = $conn->prepare("INSERT INTO departamento (cod_dpto ,nombre_dpto) VALUES (:id_dpto,:nombre)");
         $stmt->bindParam(':id_dpto', $cod_dpto);
         $stmt->bindParam(':nombre', $nombreDpto);
         
-        if($stmt->execute()){
+        if(!$stmt->execute()){
+            $error = $stmt->errorInfo();
+
+            /*
+            $error[0] → SQLSTATE (23000)
+            $error[1] → Código interno de MySQL (1062)
+            $error[2] → Mensaje completo del error
+            */
+
+            echo "SQLSTATE: " . $error[0] . "<br>";
+            echo "Código MySQL: " . $error[1] . "<br>";
+            echo "Mensaje: " . $error[2] . "<br>";
+
+            if ($error[1] == 1062) {
+                echo "¡Registro duplicado detectado!<br>";
+            }
+
+        }else{
             echo "Departamento " . $nombreDpto . " esta dado de alta.";
         }
 
@@ -59,13 +77,13 @@ function alta_dpto(){
 function obtenerUltimoCodigo($conn){
 
     try{    
-        $stmt = $conn->prepare("SELECT cod_dpto  FROM departamento ORDER BY cod_dpto DESC LIMIT 1");
+        $stmt = $conn->prepare("SELECT max(cod_dpto) 'ultimo_dpto' FROM departamento");
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $ultimoID=$stmt->fetch();
 
         if($ultimoID){
-            $cod = intval(substr($ultimoID['cod_dpto'], 1));
+            $cod = intval(substr($ultimoID['ultimo_dpto'], 1));
             $nuevo_Num = str_pad($cod + 1, 3, '0', STR_PAD_LEFT );
             $ultimoID="D" . $nuevo_Num;
         }else{
