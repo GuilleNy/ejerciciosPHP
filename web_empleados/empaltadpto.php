@@ -26,41 +26,34 @@ function verifica_campo(){
 }
 
 function alta_dpto(){
-    try{
+    //try{
         $conn = conexion_BBDD();
         $conn->beginTransaction();
 
         $nombreDpto = depurar($_POST['nombre_dpto']);
-        $cod_dpto = obtenerUltimoCodigo($conn);
+        //$cod_dpto = obtenerUltimoCodigo($conn);
         $cod_dpto = "D003";
 
-        $stmt = $conn->prepare("INSERT INTO departamento (cod_dpto ,nombre_dpto) VALUES (:id_dpto,:nombre)");
-        $stmt->bindParam(':id_dpto', $cod_dpto);
-        $stmt->bindParam(':nombre', $nombreDpto);
-        
-        if(!$stmt->execute()){
-            $error = $stmt->errorInfo();
-
-            /*
-            $error[0] → SQLSTATE (23000)
-            $error[1] → Código interno de MySQL (1062)
-            $error[2] → Mensaje completo del error
-            */
+        $res = insertarDpto($conn, $cod_dpto, $nombreDpto);
+       
+        if(!$res['resultado']){
+            $error = $res['stmt']->errorInfo();
 
             echo "SQLSTATE: " . $error[0] . "<br>";
-            echo "Código MySQL: " . $error[1] . "<br>";
-            echo "Mensaje: " . $error[2] . "<br>";
+            echo "Código MySQL: " . $error[1] . "<br>"; //Código interno de MySQL (1062)
+            echo "Mensaje: " . $error[2] . "<br>"; // Mensaje completo del error
 
             if ($error[1] == 1062) {
-                echo "¡Registro duplicado detectado!<br>";
+                echo "Registro duplicado detectado<br>";
             }
-
         }else{
             echo "Departamento " . $nombreDpto . " esta dado de alta.";
         }
+            
 
+        
         $conn->commit();
-
+    /*
     }catch(PDOException $e)
         {
             $conn->rollBack(); 
@@ -70,6 +63,7 @@ function alta_dpto(){
              // Código de error (SQLSTATE)
             echo "Código de error: " . $e->getCode() . "<br>";
         }
+    */
 }
 
 
@@ -77,22 +71,44 @@ function alta_dpto(){
 function obtenerUltimoCodigo($conn){
 
     try{    
-        $stmt = $conn->prepare("SELECT max(cod_dpto) 'ultimo_dpto' FROM departamento");
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $ultimoID=$stmt->fetch();
+       
+        $ultimoID=consultaUltimoCod($conn);
+        $nuevoID = "";
 
-        if($ultimoID){
+        if($ultimoID != False){
             $cod = intval(substr($ultimoID['ultimo_dpto'], 1));
-            $nuevo_Num = str_pad($cod + 1, 3, '0', STR_PAD_LEFT );
-            $ultimoID="D" . $nuevo_Num;
+            $nuevo_Num   = str_pad($cod + 1, 3, '0', STR_PAD_LEFT );
+            $nuevoID ="D" . $nuevo_Num  ;
         }else{
-            $ultimoID = "D001";
+            $nuevoID  = "D001";
         }
+        return $nuevoID ;
     }catch(PDOException $e)
         {
             echo "Error: " . $e->getMessage();
         }
+}
+
+function consultaUltimoCod($conn){
+    $stmt = $conn->prepare("SELECT max(cod_dpto) 'ultimo_dpto' FROM departamento");
+    $resultado = $stmt->execute();
+
+   if ($resultado) {
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $ultimoID = $stmt->fetch();  // Asigna el resultado si todo va bien
+    } else {
+        $error = $stmt->errorInfo();
+        echo "Error en consulta: " . $error[2];  // Mensaje del error
+    }
+
     return $ultimoID;
+}
+
+function insertarDpto($conn, $cod_dpto, $nombreDpto){
+    $stmt = $conn->prepare("INSERT INTO departamento (cod_dpto ,nombre_dpto) VALUES (:id_dpto,:nombre)");
+    $stmt->bindParam(':id_dpto', $cod_dpto);
+    $stmt->bindParam(':nombre', $nombreDpto);
+    $resultado = $stmt->execute(); //ejecuta y guarda el resultado de true o false
+    return ['stmt' => $stmt, 'resultado' => $resultado];
 }
 ?>
