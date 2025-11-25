@@ -111,26 +111,25 @@ function cambiarDptoEmp(){
         $dniEmp = depurar($_POST['empleado']);
         $cod_dpto = depurar($_POST['departamento']);
         $fecha_ini = date("Y-m-d");
-        $fecha_fin = null;
-     
+        
+        $stmt = $conn->prepare("SELECT cod_dpto 
+                            FROM emple_depart 
+                            WHERE dni = :dniEmp
+                            AND fecha_fin IS NULL");
+        $stmt->bindParam(':dniEmp', $dniEmp);                         
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $ultimoDpto=$stmt->fetch();
 
-        //$dato=verificarCliente($dni);
-        //if(empty($dato['dni'])){
-            $stmt = $conn->prepare("INSERT INTO emple_depart (dni , cod_dpto, fecha_ini, fecha_fin) VALUES (:dniEmp,:codDptoEmp, :fecha_ini, :fecha_fin)");
-            $stmt->bindParam(':dniEmp', $dniEmp);
-            $stmt->bindParam(':codDptoEmp', $cod_dpto);
-            $stmt->bindParam(':fecha_ini', $fecha_ini);
-            $stmt->bindParam(':fecha_fin', $fecha_fin );
-                   
-            if($stmt->execute()){
-                echo "Empleado ha cambiado de Departamento.";
-                actualizarfechaFinEmp($conn , $dniEmp , $cod_dpto);
-            }
-            /*
-        }else{
-            echo "Cliente ya registrado";
+
+
+        if($ultimoDpto){
+            $cod_dpto_actual = $ultimoDpto['cod_dpto'];
+            cerrarDptoActual( $conn, $dniEmp, $cod_dpto_actual, $fecha_ini);
         }
-        */
+
+        insertarCambioDpto($conn , $dniEmp , $cod_dpto, $fecha_ini);
+        
         $conn->commit();//importante para realizar cualquier accioon de modificacion.
 
     }catch(PDOException $e)
@@ -146,10 +145,8 @@ function cambiarDptoEmp(){
     $conn = null;
 }
 
-//esta mal arreglarlo, me mete la fecha fin en la nuevo cambio de de dpto
-function actualizarfechaFinEmp($conn , $dni , $cod_dpto){
-
-    $fecha_fin = date("Y-m-d");
+function cerrarDptoActual( $conn, $dni, $cod_dpto, $fecha_fin){
+    
     $stmt = $conn->prepare("UPDATE emple_depart
                             SET fecha_fin = :fecha_fin
                             WHERE dni = :dni
@@ -161,6 +158,41 @@ function actualizarfechaFinEmp($conn , $dni , $cod_dpto){
     
     if($stmt->execute()){
         echo "Fecha fin del empleado actualizado.<br>";
+      
+    }   
+
+}
+
+function obtenerDptoActual($conn, $dni){
+
+    $stmt = $conn->prepare("SELECT cod_dpto 
+                            FROM emple_depart 
+                            WHERE dni = :dniEmp
+                            AND fecha_fin IS NULL");
+    $stmt->bindParam(':dniEmp', $dni);                         
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $ultimoDpto=$stmt->fetch();
+
+    return $ultimoDpto;
+}
+
+
+
+//esta mal arreglarlo, me mete la fecha fin en la nuevo cambio de de dpto
+function insertarCambioDpto($conn , $dni , $cod_dpto, $fecha_ini){
+
+    $fecha_fin = null;
+
+    $stmt = $conn->prepare("INSERT INTO emple_depart (dni , cod_dpto, fecha_ini, fecha_fin) VALUES (:dniEmp,:codDptoEmp, :fecha_ini, :fecha_fin)");
+    $stmt->bindParam(':dniEmp', $dni);
+    $stmt->bindParam(':codDptoEmp', $cod_dpto);
+    $stmt->bindParam(':fecha_ini', $fecha_ini);
+    $stmt->bindParam(':fecha_fin', $fecha_fin );
+            
+    if($stmt->execute()){
+        echo "Empleado ha cambiado de Departamento.";
+        
     }
 }
 
