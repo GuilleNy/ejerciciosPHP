@@ -32,18 +32,17 @@ function alta_dpto(){
 
         $nombreDpto = depurar($_POST['nombre_dpto']);
         //$cod_dpto = obtenerUltimoCodigo($conn);
-        $cod_dpto = "D003";
+        $cod_dpto = "D006";
 
         $res = insertarDpto($conn, $cod_dpto, $nombreDpto);
        
         if(!$res['resultado']){
             $error = $res['stmt']->errorInfo();
 
-            echo "SQLSTATE: " . $error[0] . "<br>";
             echo "Código MySQL: " . $error[1] . "<br>"; //Código interno de MySQL (1062)
             echo "Mensaje: " . $error[2] . "<br>"; // Mensaje completo del error
 
-            if ($error[1] == 1062) {
+            if ($error[1] == 1062) { 
                 echo "Registro duplicado detectado<br>";
             }
         }else{

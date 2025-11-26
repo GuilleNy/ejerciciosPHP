@@ -3,7 +3,7 @@
     define('DB_SERVER', 'localhost');
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', 'rootroot');
-    define('DB_DATABASE', 'empleados');
+    define('DB_DATABASE', 'empleados1n');
 
 function conexion_BBDD(){
 
