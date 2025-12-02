@@ -57,55 +57,75 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 
 
-
 function alta_categoria(){
-    try{
-        $conn = conexion_BBDD();
-        $conn->beginTransaction();
+    $nombreCategoria = depurar($_POST['nombre_cat']);
+    $resultado =  insertar_categoria($nombreCategoria);
 
-        $nombreCategoria = depurar($_POST['nombre_cat']);
-        $cod_catg = obtenerUltimoCodigo($conn);
+    if($resultado === True){
+        echo "Categoria " . $nombreCategoria . " esta dado de alta.";
+    }
+}
+
+
+function insertar_categoria($nombreCategoria){
+    $conn = conexion_BBDD();
+
+    $cod_catg = ultimo_id($conn);
+
+    try{
+        $conn->beginTransaction();
 
         $stmt = $conn->prepare("INSERT INTO categoria (id_categoria ,nombre) VALUES (:id_categoria,:nombre)");
         $stmt->bindParam(':id_categoria', $cod_catg);
         $stmt->bindParam(':nombre', $nombreCategoria);
-        
-        if($stmt->execute()){
-            echo "Categoria " . $nombreCategoria . " esta dado de alta.";
-        }
-
+        $stmt->execute();
 
         $conn->commit();//importante para realizar cualquier accion de modificacion.
 
+        return True;
     }catch(PDOException $e)
-        {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
-            }
-            echo "Error: " . $e->getMessage();
+    {
+        if ($conn->inTransaction()) {
+            $conn->rollBack(); 
         }
-
+        echo "Error: " . $e->getMessage();
+    }
 }
-function obtenerUltimoCodigo($conn){
 
-    try{    
-        $stmt = $conn->prepare("SELECT id_categoria  FROM categoria ORDER BY id_categoria DESC LIMIT 1");
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $ultimoID=$stmt->fetch();
+function ultimo_id($conn){
+
+    $ultimoID = obtenerUltimo_id($conn);
 
         if($ultimoID){
-            $cod = intval(substr($ultimoID['id_categoria'], 1));
+            $cod = intval(substr($ultimoID, 1));
             $nuevo_Num = str_pad($cod + 1, 3, '0', STR_PAD_LEFT );
             $ultimoID="C" . $nuevo_Num;
         }else{
             $ultimoID = "C001";
         }
-    }catch(PDOException $e)
-        {
-            echo "Error: " . $e->getMessage();
-        }
+    
     return $ultimoID;
 }
 
+function obtenerUltimo_id($conn){
+
+    $resultado = False;
+
+    try{    
+        $stmt = $conn->prepare("SELECT max(id_categoria) 'ultima_id'
+                                FROM categoria ");
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $ultimoID=$stmt->fetch();
+
+       if (isset($ultimoID['ultima_id'])) {
+            $resultado = $ultimoID['ultima_id'];
+        }
+    }catch(PDOException $e)
+    {
+        $resultado = False;
+        echo "Error: " . $e->getMessage();
+    }
+    return $resultado;
+}
 ?>
