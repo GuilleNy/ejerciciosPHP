@@ -89,68 +89,39 @@ function verifica_campo(){
 
 
     if (empty($_POST['nombre'])) {
-        $mensaje .= "El campo Nombre desde esta vacio. <br>";
+        $mensaje .= "El campo Nombre esta vacio. <br>";
         $enviar = False;  
     }
 
     if (empty($_POST['apellido'])) {
-        $mensaje .= "El campo Apellido hasta esta vacio. <br>";
+        $mensaje .= "El campo Apellido esta vacio. <br>";
         $enviar = False;  
     }
 
     if (empty($_POST['nif'])) {
-        $mensaje .= "El campo NIF hasta esta vacio. <br>";
+        $mensaje .= "El campo NIF esta vacio. <br>";
         $enviar = False;  
     }
 
     if (empty($_POST['cp'])) {
-        $mensaje .= "El campo CP hasta esta vacio. <br>";
+        $mensaje .= "El campo CP esta vacio. <br>";
         $enviar = False;  
     }
 
     if (empty($_POST['direccion'])) {
-        $mensaje .= "El campo Direccion hasta esta vacio. <br>";
+        $mensaje .= "El campo Direccion esta vacio. <br>";
         $enviar = False;  
     }
 
     if (empty($_POST['ciudad'])) {
-        $mensaje .= "El campo Ciudad hasta esta vacio. <br>";
+        $mensaje .= "El campo Ciudad esta vacio. <br>";
         $enviar = False;  
     }
     
     echo $mensaje;
     return $enviar;
 }
-/*
-function validadNIF(){
-    $mensaje = ""; 
-    $enviar = True; 
 
-    $nif = depurar($_POST['nif']);
-
-    $numero = substr($nif, 0, 8);
-    $letra = substr($nif, -1);
-
-
-    if(strlen($nif) > 9){
-        $mensaje .= "El NIF debe componer de 8 digitos. <br>";
-        $enviar = False;
-    }else{
-        if(!is_numeric($numero)){
-            $mensaje .= "El NIF debe componer de digitos los primeros 8 numeros. <br>";
-            $enviar = False;
-        }else{
-            if(!is_string($letra)){
-                $mensaje .= "El NIF debe finalizar con una Letra. <br>";
-                $enviar = False;
-            }
- 
-        }
-    }
-    echo $mensaje;
-    return $enviar;
-}
-*/
 function registrarCliente(){
     
         $conn = conexion_BBDD();
@@ -163,11 +134,12 @@ function registrarCliente(){
         $direccion = depurar($_POST['direccion']);
         $ciudad = depurar($_POST['ciudad']);
 
-        $clave = strrev($apellido);
+        $clave = strtolower(strrev($apellido));
 
         $dato=verificarCliente($nif);
         if(empty($dato['NIF'])){
             insertarCliente($conn, $nif, $nombre, $apellido, $cp, $direccion, $ciudad, $clave);
+            echo "Cliente " . $nombre . " esta dado de alta.";
         }else{
             echo "Cliente ya esta registrado, Introduce otro DNI.";
         }
@@ -187,10 +159,9 @@ function insertarCliente($conn, $nif, $nombre, $apellido, $cp, $direccion, $ciud
         $stmt->bindParam(':direccionCli', $direccion);
         $stmt->bindParam(':ciudadCli', $ciudad);
         $stmt->bindParam(':claveCli', $clave);
+        $stmt->execute();
+            
         
-        if($stmt->execute()){
-            echo "Cliente " . $nombre . " esta dado de alta.";
-        }
 
     }catch(PDOException $e)
         {

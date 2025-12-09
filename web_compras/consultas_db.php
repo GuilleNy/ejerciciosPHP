@@ -58,9 +58,8 @@ function obtenerClientes(){
         }
 
     return $all_clientes;
-
-
 }
+
 
 
 ?>
