@@ -1,7 +1,8 @@
 
 <?php
-
+session_start();
 include "otras_funciones.php";
+include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
 
 ?>
@@ -56,9 +57,19 @@ include_once "db/BBDD_empaltadpto.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
        
     if (verifica_campo()) {
+        list($usuario, $clave)=recogerDatos();
+        obtenerDatosLogin($usuario, $clave);
+
+       
+        /*
         if(verificarLogin()){
-            echo "Inicio";
-        } 
+            iniciarSesion($usuario, $clave);
+        }else{
+            $_SESSION['mensajeLogin'] = "Usuario no existente";
+            header("Location: ./comlogincli.php");
+            exit();
+        }
+            */
     }         
 }
 
@@ -86,21 +97,21 @@ function verifica_campo(){
 function verificarLogin(){
     $enviar = False;
 
-    $usuario = depurar($_POST['usuario']);
-    $clave = strrev(depurar($_POST['clave']));
+    list($usuario, $clave)=recogerDatos();
 
     $dato=obtenerDatosLogin($usuario, $clave);
 
-    echo "<pre>";
-        print_r($dato); 
-    echo "</pre>";
-
     if((low($dato['NOMBRE']) == low($usuario)) && ($dato['CLAVE'] == $clave)){
         $enviar = True;
-        
     }
 
     return $enviar;
+}
+
+function recogerDatos(){
+    $nomUsuario=depurar($_POST['usuario']);
+    $contrUsuario=strrev(depurar($_POST['clave']));
+    return [$nomUsuario, $contrUsuario];
 }
 
 function low($cadena){
@@ -119,12 +130,27 @@ function obtenerDatosLogin($usuario, $clave){
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $datos=$stmt->fetch();
+
+        print_r($datos);
     }catch(PDOException $e)
         {
             echo "Error: " . $e->getMessage();
         }
 
     return $datos;
+}
+
+
+function iniciarSesion($usu, $contra){
+    //si no esta creada la sesion crearmela
+    if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
+        crearSesion($usu, $contra);
+    }
+
+    if(verificarSesion()){
+        header("Location: ./com_inicio_cli.php");
+    }
+    
 }
 
 
