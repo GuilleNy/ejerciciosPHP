@@ -4,6 +4,7 @@ session_start();
 include "otras_funciones.php";
 include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
+include_once "consultas_db.php";
 
 
 ?>
@@ -64,7 +65,6 @@ function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
 
-
     if (empty($_POST['usuario'])) {
         $mensaje .= "El campo Usuario esta vacio. <br>";
         $enviar = False;  
@@ -74,8 +74,6 @@ function verifica_campo(){
         $mensaje .= "El campo Clave esta vacio. <br>";
         $enviar = False;  
     }
-
-    
     echo $mensaje;
     return $enviar;
 }
@@ -122,6 +120,7 @@ function iniciarSesion($usu, $contra){
     //si no esta creada la sesion crearmela
     if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
         crearSesion($usu, $contra);
+        $_SESSION['VstNIF'] = obtenerNIFCli();
     }
     //Si la sesion del usario con su contraseña esta creada , esta puede acceder al inicio de la pagina
     if(verificarSesion()){

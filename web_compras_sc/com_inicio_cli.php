@@ -2,9 +2,11 @@
 session_start();
 include_once "func_sesiones.php";
 
+
+#Aqui verifico si la session sigue activa, en el caso de que NO esta vuelve a la pagina del login
 if(!verificarSesion())
 {
-	header("Location: ./com_inicio_cli.php");
+	header("Location: ./comlogincli.php");
 }
 print_r($_SESSION);
 ?>

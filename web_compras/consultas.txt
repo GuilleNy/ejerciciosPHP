@@ -1,5 +1,0 @@
-select LOCALIDAD, CANTIDAD
-FROM producto , almacena , almacen
-WHERE producto.ID_PRODUCTO = almacena.ID_PRODUCTO
-AND almacena.NUM_ALMACEN = almacen.NUM_ALMACEN 
-AND ID_PRODUCTO = 'P0001';
