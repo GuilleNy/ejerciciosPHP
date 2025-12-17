@@ -1,12 +1,12 @@
 <?php
 session_start();
 include_once "func_sesiones.php";
-include_once "func_inicio.php";
+
 if(!verificarSesion())
 {
 	header("Location: ./com_inicio_cli.php");
 }
-
+print_r($_SESSION);
 ?>
 
 <html lang="es">
@@ -44,20 +44,6 @@ if(!verificarSesion())
             </div>
         </div>
     </form>
-
-    <?php
-
-    print_r($_SESSION);
-    
-        if(isset($_POST['logout'])){
-            if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
-				eliminarSesionYRedirigir();
-			}
-        }  
-
-    ?>   
-
-
 </body>
 </html>
 
@@ -68,9 +54,11 @@ if (isset($_POST['compraProd'])){
     header("Location: ./comprocli.php");
 }else if(isset($_POST['consultarCompras'])){
     header("Location: ./comconscli.php");
-}
-
-
+}else if(isset($_POST['logout'])){
+    if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
+        eliminarSesionYRedirigir();
+    }
+}  
 
 
 

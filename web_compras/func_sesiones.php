@@ -8,7 +8,7 @@ function eliminarSesionYRedirigir(){
     session_destroy();
     session_unset();
     setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
-    header("Location: ./com_inicio_cli.php");
+    header("Location: ./comlogincli.php");
 }
 
 function verificarSesion(){
@@ -18,6 +18,7 @@ function verificarSesion(){
     }
     return $sessionCreada;
 }
+
 
 
 ?>

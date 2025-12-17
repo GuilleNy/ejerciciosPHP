@@ -5,9 +5,8 @@ include "otras_funciones.php";
 include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
 
+
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -27,7 +26,6 @@ include_once "db/BBDD_empaltadpto.php";
         <div class="card border-success mb-3 mx-auto" style="max-width: 20rem;">
             <div class="card-body">
                 <form id="product-form"  action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
-
                     <div class="form-group">
                         <label for="usuario">Usuario:</label>
                         <input type="text" name="usuario" class="form-control">
@@ -37,42 +35,32 @@ include_once "db/BBDD_empaltadpto.php";
                         <label for="clave">Clave:</label>
                         <input type="text" name="clave" class="form-control">
                     </div>
-
-
                     <input type="submit" name="submit" value="Registrarse" class="btn btn-warning">
-
                 </form>
             </div>
         </div>
     </div>
 </body>
-
-
 </html>
 
-
 <?php
-
-
 if($_SERVER["REQUEST_METHOD"] == "POST"){
        
     if (verifica_campo()) {
         list($usuario, $clave)=recogerDatos();
-        obtenerDatosLogin($usuario, $clave);
-
-       
-        /*
-        if(verificarLogin()){
+        if(verificarLogin($usuario, $clave)){
             iniciarSesion($usuario, $clave);
         }else{
-            $_SESSION['mensajeLogin'] = "Usuario no existente";
-            header("Location: ./comlogincli.php");
-            exit();
-        }
-            */
+            redirigirLogin();
+        }    
     }         
 }
 
+function redirigirLogin(){
+    #$_SESSION['mensajeLogin'] = "Usuario no existente";
+    header("Location: ./comlogincli.php");
+    exit();
+}
 
 function verifica_campo(){
     $mensaje = ""; 
@@ -94,23 +82,19 @@ function verifica_campo(){
     return $enviar;
 }
 
-function verificarLogin(){
+function verificarLogin($usuario, $clave){
     $enviar = False;
-
-    list($usuario, $clave)=recogerDatos();
-
     $dato=obtenerDatosLogin($usuario, $clave);
 
     if((low($dato['NOMBRE']) == low($usuario)) && ($dato['CLAVE'] == $clave)){
         $enviar = True;
     }
-
     return $enviar;
 }
 
 function recogerDatos(){
     $nomUsuario=depurar($_POST['usuario']);
-    $contrUsuario=strrev(depurar($_POST['clave']));
+    $contrUsuario=depurar($_POST['clave']);
     return [$nomUsuario, $contrUsuario];
 }
 
@@ -130,8 +114,6 @@ function obtenerDatosLogin($usuario, $clave){
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $datos=$stmt->fetch();
-
-        print_r($datos);
     }catch(PDOException $e)
         {
             echo "Error: " . $e->getMessage();
@@ -140,20 +122,15 @@ function obtenerDatosLogin($usuario, $clave){
     return $datos;
 }
 
-
 function iniciarSesion($usu, $contra){
     //si no esta creada la sesion crearmela
     if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
         crearSesion($usu, $contra);
     }
-
+    #Si la sesion del usario con su contraseña esta creada , esta puede acceder al inicio de la pagina
     if(verificarSesion()){
         header("Location: ./com_inicio_cli.php");
     }
-    
 }
-
-
-
 
 ?>
