@@ -48,47 +48,32 @@ print_r($_SESSION);
                             ?>
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <label for="localidad">Localidad:</label>
-                        <select name="localidad" class="form-control">
-                            <option value="" disabled selected>-- Selecciona la Localidad --</option>
-                            <?php
-                                $almacenes= obtenerAlmacenes();
-                                foreach ($almacenes as $fila) {
-                                    echo "<option value=\"" . $fila['NUM_ALMACEN'] . "\">" . $fila['LOCALIDAD'] . "</option>";
-                                }
-                            ?>
-                        </select>
-                    </div>
-                     <?php
-                         $cesta = devolverCesta();
-                        if($cesta != null)
-                        {
-                            echo "<div id='cesta'>";
-                            print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Precio</th></tr>';
-                            
-                            foreach ($cesta as $productoCesta => $detalles) {
-                                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[2]."</td></tr>";
-                            }
-                            print "</tr>";
-                            echo "</div>";
-                        }
-                    ?>
                     <BR>
-                        
                     <div>
                         <input type="submit" name="añadirCesta" value="Añadir a la cesta" class="btn btn-warning">
                         <input type="submit" name="vaciar" value="Vaciar Cesta"  class="btn btn-warning"> 
                         <input type="submit" name="pedido" value="Realizar Pedido"  class="btn btn-warning ">
                         <input type="submit" name="atras" value="Atras" class="btn btn-primary">
                     </div>
-                    
-
                 </form>
             </div>
         </div>
     </div>
+
+    <?php
+        $cesta = devolverCesta();
+        if($cesta != null)
+        {
+            echo "<div id='cesta'>";
+            print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Precio</th></tr>';
+            
+            foreach ($cesta as $productoCesta => $detalles) {
+                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[2]."</td></tr>";
+            }
+            print "</tr>";
+            echo "</div>";
+        }
+    ?>
 </body>
 
 
@@ -127,12 +112,6 @@ function verifica_campo(){
         $mensaje .= "No se ha seleccionado un Producto.<br>";
         $enviar = False; 
     }    
-
-    if(!isset($_POST['localidad'])){
-        $mensaje .= "No se ha seleccionado la Localidad.<br>";
-        $enviar = False; 
-    }  
-
     echo $mensaje;
     return $enviar;
 }
@@ -143,7 +122,7 @@ function registrarCompra(){
     $nif =  $_SESSION['VstNIF'];
     $idProducto = depurar($_POST['producto']);
     $fecha = date("Y-m-d");
-    $numAlm = depurar($_POST['localidad']);
+    $numAlm = depurar($_POST['localidad']);#eliminar esto, antes veridficar
     $unidadesProd = intval(verificarCantProd($conn, $idProducto, $numAlm));
     //echo $unidadesProd;
 
