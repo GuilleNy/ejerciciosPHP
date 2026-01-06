@@ -175,7 +175,7 @@ function obtenerCodProd($cadena){
 
 
 
-
+//ya hice el añadir cesta ahora falta registrar compra, queda pendiente en hacerlo. pa mañana
 
 function registrarCompra(){
     $conn = conexion_BBDD();
