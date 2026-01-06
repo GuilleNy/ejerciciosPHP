@@ -10,7 +10,9 @@ if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
 }
-print_r($_SESSION);
+echo "<pre>";
+    print_r($_SESSION);
+echo "</pre>";
 
 
 ?>
@@ -48,6 +50,11 @@ print_r($_SESSION);
                             ?>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="producto">Cantidad:</label>
+                        <input type="number" name="cantidad" min="1" value="1" class="form-control" >
+                    </div>
                     <BR>
                     <div>
                         <input type="submit" name="añadirCesta" value="Añadir a la cesta" class="btn btn-warning">
@@ -65,10 +72,10 @@ print_r($_SESSION);
         if($cesta != null)
         {
             echo "<div id='cesta'>";
-            print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Precio</th></tr>';
+            print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Cantidad</th><th>Precio</th></tr>';
             
             foreach ($cesta as $productoCesta => $detalles) {
-                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[2]."</td></tr>";
+                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[3]."</td><td>".$detalles[2]."</td></tr>";
             }
             print "</tr>";
             echo "</div>";
@@ -84,16 +91,20 @@ print_r($_SESSION);
 
 
 if(isset($_POST['añadirCesta'])){
-    $producto = $_POST['producto'];
-            
-    annadirCesta($producto);//controller_session.php
-    header("Refresh: 0");
 
+    if(verifica_campo()){
+        if(comprobarCantidad()){
+            $producto = $_POST['producto'];
+            $cantProducto = depurar($_POST['cantidad']);
+            annadirCesta($producto, $cantProducto);//func_sesiones.php
+            header("Refresh: 0");
+        } 
+    }
 }else if(isset($_POST['pedido'])){
     if(verifica_campo()){
         registrarCompra();
     }
-    #$importeTotal=obtenerImporteTotal();//controller_session.php 
+    #$importeTotal=obtenerImporteTotal();//func_sesiones.php 
     
 }else if(isset($_POST['vaciar'])){
     vaciarCesta();
@@ -104,6 +115,7 @@ if(isset($_POST['añadirCesta'])){
     header("Location: ./com_inicio_cli.php");
 }
 
+#Funcion que verifica que se haya seleccionado un producto.
 function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
@@ -116,11 +128,63 @@ function verifica_campo(){
     return $enviar;
 }
 
+#Funcion que comprueba si la cantidad solicitada del producto seleccionado esta disponible en los almacenes.
+function comprobarCantidad(){
+    $valido = True;
+    $idProducto = depurar(obtenerCodProd($_POST['producto'])); 
+    $cantProducto = depurar($_POST['cantidad']);
+    $cantidadTotal = obtenerCantidadTotal($idProducto);
+
+    if($cantProducto > $cantidadTotal){
+        echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
+        $valido =  False;
+    }
+    return $valido;
+}
+
+#Funcion que obtiene la cantidad total disponible de un producto en todos los almacenes.
+function obtenerCantidadTotal($idProd){
+    $conn = conexion_BBDD();
+    $cantidad = 0;
+    try{    
+        $stmt = $conn->prepare("SELECT sum(CANTIDAD) as cantidadTotal 
+                                FROM almacena
+                                WHERE ID_PRODUCTO = :id_producto
+                                AND CANTIDAD > :cant");
+        $stmt->bindParam(':id_producto', $idProd);
+        $stmt->bindParam(':cant', $cantidad);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $unidades=$stmt->fetch();
+        return intval($unidades['cantidadTotal']);
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+#Funcion que obtiene el codigo del producto a partir de la cadena recibida desde el formulario en donde se selecciona el producto.
+function obtenerCodProd($cadena){
+    $arrayDatos = explode("|", $cadena);
+    return $arrayDatos[0];
+}
+
+
+
+
+
+
+
+
+
 function registrarCompra(){
     $conn = conexion_BBDD();
 
     $nif =  $_SESSION['VstNIF'];
-    $idProducto = depurar($_POST['producto']);
+    $idProducto = depurar(obtenerCodProd($_POST['producto'])); # ??
+    $cantProducto = depurar($_POST['cantidad']);
+
+
     $fecha = date("Y-m-d");
     $numAlm = depurar($_POST['localidad']);#eliminar esto, antes veridficar
     $unidadesProd = intval(verificarCantProd($conn, $idProducto, $numAlm));
@@ -166,8 +230,6 @@ function registrarCompra(){
         }
 
 }
-
-
 
 
 //Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto.

@@ -21,34 +21,33 @@ function verificarSesion(){
 }
 
 
-function annadirCesta($producto){
+function annadirCesta($producto, $cantProducto){
+    $cadena = $producto . "|" . $cantProducto;
     
-    $detallesProductos=explode("|", $producto);
+    $detallesProductos=explode("|", $cadena);
 
-    if (isset($_SESSION["compra"]["producto"])) {
-        $cestaProducto = $_SESSION["compra"]["producto"];
+    if (isset($_SESSION["compra"])) {
+        $cestaProducto = $_SESSION["compra"];
         $cestaProducto[] = $detallesProductos;
     } else {
         $cestaProducto = array();
         $cestaProducto[] = $detallesProductos;
     }
 
-    $_SESSION["compra"]["producto"] = $cestaProducto;
-    
-
+    $_SESSION["compra"] = $cestaProducto;
 }
 
 function devolverCesta()
 {
     $cesta = null;
-    if(isset($_SESSION["compra"]["producto"]))
-        $cesta = $_SESSION["compra"]["producto"];
+    if(isset($_SESSION["compra"]))
+        $cesta = $_SESSION["compra"];
     return $cesta;
 }
 
 function vaciarCesta()
 {
-    unset($_SESSION["compra"]["producto"]);
+    unset($_SESSION["compra"]);
 }
 
 ?>
