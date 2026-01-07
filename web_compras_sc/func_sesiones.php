@@ -9,6 +9,7 @@ function eliminarSesionYRedirigir(){
     session_destroy();
     session_unset();
     setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
+
     header("Location: ./comlogincli.php");
 }
 
@@ -19,6 +20,19 @@ function verificarSesion(){
     }
     return $sessionCreada;
 }
+
+function crearCookie($nombreCookie, $valorCookie){
+    setcookie($nombreCookie, $valorCookie, time() + (86400 * 30), "/");
+}
+
+
+function eliminarCookie($nombreCookie){
+    setcookie($nombreCookie, "" , time() - (86400 * 30), "/");
+}
+
+
+
+
 
 
 function annadirCesta($producto, $cantProducto){
@@ -48,6 +62,12 @@ function devolverCesta()
 function vaciarCesta()
 {
     unset($_SESSION["compra"]);
+
+    foreach ($_COOKIE as $nombre => $valor) {
+        if ($nombre !== session_name()) { //evito borrar la cookie de sesion
+            setcookie($nombre, "", time() - 3600, "/");
+        }
+    }
 }
 
 ?>

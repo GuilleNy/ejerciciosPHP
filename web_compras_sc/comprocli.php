@@ -14,6 +14,9 @@ echo "<pre>";
     print_r($_SESSION);
 echo "</pre>";
 
+echo "<pre>";
+print_r($_COOKIE);
+echo "</pre>";
 
 ?>
 
@@ -135,10 +138,18 @@ function comprobarCantidad(){
     $cantProducto = depurar($_POST['cantidad']);
     $cantidadTotal = obtenerCantidadTotal($idProducto);
 
-    if($cantProducto > $cantidadTotal){
-        echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
-        $valido =  False;
+    if(!isset($_COOKIE[$idProducto])){
+        crearCookie($idProducto, $cantidadTotal - $cantProducto); //creo la cookie con la cantidad restante
+    }else{
+        if($_COOKIE[$idProducto] < $cantProducto){
+            echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
+            $valido =  False;
+        }else{
+            $cantCookie = $_COOKIE[$idProducto];
+            crearCookie($idProducto, $cantCookie - $cantProducto); // actualizo la cookie con la cantidad restante
+        }
     }
+    
     return $valido;
 }
 
