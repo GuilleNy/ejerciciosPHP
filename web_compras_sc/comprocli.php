@@ -72,6 +72,7 @@ echo "</pre>";
 
     <?php
         $cesta = devolverCesta();
+        $precioTotal = precioTotalCesta();
         if($cesta != null)
         {
             echo "<div id='cesta'>";
@@ -81,6 +82,7 @@ echo "</pre>";
                 print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[3]."</td><td>".$detalles[2]."</td></tr>";
             }
             print "</tr>";
+            print "<tr><td colspan='3'><strong>Precio Total:</strong></td><td><strong>" . $precioTotal . " €</strong></td></tr>";
             echo "</div>";
         }
     ?>
@@ -104,10 +106,14 @@ if(isset($_POST['añadirCesta'])){
         } 
     }
 }else if(isset($_POST['pedido'])){
-    if(verifica_campo()){
-        registrarCompra();
-    }
-    #$importeTotal=obtenerImporteTotal();//func_sesiones.php 
+    
+    registrarCompra();
+    
+    
+    vaciarCesta();
+    
+    
+    #$importeTotal=precioTotalCesta();//func_sesiones.php 
     
 }else if(isset($_POST['vaciar'])){
     vaciarCesta();
@@ -184,52 +190,69 @@ function obtenerCodProd($cadena){
 
 
 
-
-
 //ya hice el añadir cesta ahora falta registrar compra, queda pendiente en hacerlo. pa mañana
 
 function registrarCompra(){
     $conn = conexion_BBDD();
 
-    $nif =  $_SESSION['VstNIF'];
-    $idProducto = depurar(obtenerCodProd($_POST['producto'])); # ??
-    $cantProducto = depurar($_POST['cantidad']);
-
-
-    $fecha = date("Y-m-d");
-    $numAlm = depurar($_POST['localidad']);#eliminar esto, antes veridficar
-    $unidadesProd = intval(verificarCantProd($conn, $idProducto, $numAlm));
-    //echo $unidadesProd;
-
     try{
         $conn->beginTransaction();
 
-        if($unidadesProd > 0){
-            if(verificarDuplicado($conn, $nif , $idProducto , $fecha)){ // True si hay duplicado de fecha entonces actualizo la cantidad de Unidades del mismo cliente , del mismo producto de la misma fecha.
-                actualizarCantCompra($conn, $nif , $idProducto , $fecha);   // Actualizo la cantidad de unidades en la tabla compra
-                actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd); // Actualizo la cantidad de unidades en la tabla almacena
-                echo "Se ha completado la compra.";
-                
-            }else{
-                $cantFinal = 1;
+        $nif =  devolverNIF();
+        $fecha = date("Y-m-d");
+        $cestaProductos = devolverCesta();
 
-                $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
-                $stmt->bindParam(':nifCli', $nif);
-                $stmt->bindParam(':id_producto', $idProducto);
-                $stmt->bindParam(':fechaCompra', $fecha);
-                $stmt->bindParam(':unidades', $cantFinal);
-                
-                if($stmt->execute()){
-                    actualizarCantidadAlmacena($conn, $numAlm, $idProducto, $unidadesProd);
-                    echo "Se ha completado la compra.";
-                }
-            }
+        if($cestaProductos != null){
+            foreach ($cestaProductos as $productos => $detalles) {
+                $idProducto = $detalles[0];
+                $cantidadProd = $detalles[3]; //3
+                $numAlmacen = almacenConStocks($detalles[0], $conn ); //obtengo los almacenes que tenga stock del producto
+
             
+                        /*
+                        if(verificarDuplicado($conn, $nif , $idProducto , $fecha)){ // True si hay duplicado de fecha entonces actualizo la cantidad de Unidades del mismo cliente , del mismo producto de la misma fecha.
+                            for ($i=0; $i < $cantidadProd; $i++) { 
+                                actualizarCantCompra($conn, $nif , $idProducto , $fecha);   // Actualizo la cantidad de unidades en la tabla compra
+                                actualizarCantidadAlmacena($conn, $numAlmacen["NUM_ALMACEN"], $idProducto, 1); // Actualizo la cantidad de unidades en la tabla almacena
+                            }
+                            echo "Se ha completado la compra.";
+                            $cantidadProd = 0;
+                        }else{
+                        */
+                            $cantFinal = $cantidadProd; // la cantidad que se va a insertar en la tabla compra
+
+                            $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
+                            $stmt->bindParam(':nifCli', $nif);
+                            $stmt->bindParam(':id_producto', $idProducto);
+                            $stmt->bindParam(':fechaCompra', $fecha);
+                            $stmt->bindParam(':unidades', $cantFinal);
+                
+                            if($stmt->execute()){
+                                echo "Compra del producto " . $detalles[1] . " registrada correctamente.<br>";
+                            }
+                            
+                        
+                            /*
+                            if($stmt->execute()){
+
+                                foreach ($numAlmacen as $fila){
+                                
+                                        $cantFinal -= $fila["CANTIDAD"];
+                                        actualizarCantidadAlmacena($conn, $fila["NUM_ALMACEN"], $idProducto, $fila["CANTIDAD"]);
+                                    
+                                    $cantidadProd = $cantFinal;
+                                }
+                                
+                            }
+                                */
+                        /*
+                        }
+                        */
+            }
         }else{
-            echo "No hay suficientes unidades del producto seleccionado en el almacén elegido.<br>";
+            echo "La cesta esta vacia, no se puede registrar la compra.<br>";
         }
-
-
+        
     $conn->commit();//importante para realizar cualquier accion de modificacion.
 
     }catch(PDOException $e)
@@ -239,8 +262,26 @@ function registrarCompra(){
             }
             echo "Error: " . $e->getMessage();
         }
-
 }
+
+function almacenConStocks($idProducto, $conn ){
+     try{    
+        $stmt = $conn->prepare("SELECT NUM_ALMACEN  
+                                FROM almacena 
+                                WHERE ID_PRODUCTO = :idProd
+                                AND CANTIDAD > 0 ");
+        $stmt->bindParam(':idProd', $idProducto);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $datosAlmacen=$stmt->fetchAll();
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    }
+    return $datosAlmacen;
+}
+
+
 
 
 //Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto.

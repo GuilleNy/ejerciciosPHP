@@ -70,4 +70,21 @@ function vaciarCesta()
     }
 }
 
+function devolverNIF(){
+    return $_SESSION["VstNIF"];
+}
+
+function precioTotalCesta(){
+    $cesta = devolverCesta();
+    $precioTotal = 0;
+
+    if($cesta != null){
+        foreach ($cesta as $productoCesta => $detalles) {
+            $precioTotal += $detalles[2] * $detalles[3];
+        }
+    }
+   
+    return $precioTotal;
+}
+
 ?>
