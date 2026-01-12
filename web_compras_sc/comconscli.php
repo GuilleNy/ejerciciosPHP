@@ -2,7 +2,6 @@
 session_start();
 include "otras_funciones.php";
 include_once "db/BBDD_empaltadpto.php";
-include_once "consultas_db.php";
 include_once "func_sesiones.php";
 
 if(!verificarSesion())
@@ -12,10 +11,7 @@ if(!verificarSesion())
 echo "<pre>";
     print_r($_SESSION);
 echo "</pre>";
-
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -55,39 +51,14 @@ echo "</pre>";
             </div>
         </div>
     </div>
-
-    <?php
-        $cesta = devolverCesta();
-        $precioTotal = precioTotalCesta();
-        if($cesta != null)
-        {
-            echo "<div id='cesta'>";
-            print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Cantidad</th><th>Precio</th></tr>';
-            
-            foreach ($cesta as $productoCesta => $detalles) {
-                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[3]."</td><td>".$detalles[2]."</td></tr>";
-            }
-            print "</tr>";
-            print "<tr><td colspan='3'><strong>Precio Total:</strong></td><td><strong>" . $precioTotal . " €</strong></td></tr>";
-            echo "</div>";
-        }
-    ?>
 </body>
-
-
 </html>
-
 
 <?php
 
 if(isset($_POST['consultar'])){
     if(verifica_campo()){
-        if(comprobarCantidad()){
-            $producto = $_POST['producto'];
-            $cantProducto = depurar($_POST['cantidad']);
-            annadirCesta($producto, $cantProducto);//func_sesiones.php
-            header("Refresh: 0");
-        } 
+        visualizarCompras();
     }
 }else if(isset($_POST['atras'])){
     header("Location: ./com_inicio_cli.php");
@@ -110,27 +81,55 @@ function verifica_campo(){
     return $enviar;
 }
 
+function visualizarCompras(){
+    $nif = devolverNIF();
+    $fecha_desde =depurar($_POST['fechaDesde']);   
+    $fecha_hasta =depurar($_POST['fechaHasta']);
+   
+    $all_productos = obtenerCompras($nif , $fecha_desde, $fecha_hasta);
 
-function consultarProductos(){
-    $conn = conexion_BBDD();
-
-    try{
-        $conn->beginTransaction();
-
-        $nif =  devolverNIF();
-        $fecha = date("Y-m-d");
-        
-
-    }catch(PDOException $e)
-        {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
+    echo "<table class='table table-striped w-50 mx-auto'>";
+        echo "<tr>
+                <th>Producto</th>
+                <th>Fecha</th>
+                <th>Unidades</th>
+              </tr>";
+        // Recorrer filas
+        if(empty($all_productos)){
+            echo "No hay datos en esas fechas";
+            
+        }else{
+            foreach ($all_productos as $fila) {
+                echo "<tr>";
+                echo "<td>" . $fila['nombre'] . "</td>";
+                echo "<td>" . $fila['fechaCompra'] . "</td>";
+                echo "<td>" . $fila['unidades'] . "</td>";
+                echo "</tr>";
             }
-            echo "Error: " . $e->getMessage();
         }
 }
 
+function obtenerCompras($nif, $fecha_desde, $fecha_hasta){
+    $conn = conexion_BBDD();
+    try{    
+        $stmt = $conn->prepare("SELECT p.NOMBRE 'nombre', c.FECHA_COMPRA 'fechaCompra', c.UNIDADES 'unidades'
+                                FROM compra c, producto p
+                                WHERE c.ID_PRODUCTO = p.ID_PRODUCTO
+                                AND  c.NIF = :nif_cliente
+                                AND c.FECHA_COMPRA BETWEEN :fecha_desde AND :fecha_hasta");
+        $stmt->bindParam(':nif_cliente', $nif);
+        $stmt->bindParam(':fecha_desde', $fecha_desde);
+        $stmt->bindParam(':fecha_hasta', $fecha_hasta);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $all_productos=$stmt->fetchAll();
+    }catch(PDOException $e)
+        {
+            echo "Error: " . $e->getMessage();
+        }
 
+    return $all_productos;
+}
 
 
 ?>
