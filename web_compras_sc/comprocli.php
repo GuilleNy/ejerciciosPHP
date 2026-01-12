@@ -200,31 +200,12 @@ function registrarCompra(){
                 $cantidadProd = $detalles[3]; //3
         
                 if (!verificarDuplicado($conn, $nif, $idProducto, $fecha)) {
-                    // NO existe → INSERT
-                    $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO, FECHA_COMPRA, UNIDADES)
-                        VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)
-                    ");
-                    $stmt->bindParam(':nifCli', $nif);
-                    $stmt->bindParam(':id_producto', $idProducto);
-                    $stmt->bindParam(':fechaCompra', $fecha);
-                    $stmt->bindParam(':unidades', $cantidadProd);
-
-                    $stmt->execute();
+                    //si no existe la compra se hara un insert
+                    insertarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
                     
                 } else {
-                    // SÍ existe → UPDATE
-                    $stmt = $conn->prepare("UPDATE compra
-                                            SET UNIDADES = UNIDADES + :unidades
-                                            WHERE NIF = :nifCli
-                                            AND ID_PRODUCTO = :id_producto
-                                            AND FECHA_COMPRA = :fechaCompra
-                    ");
-                    $stmt->bindParam(':unidades', $cantidadProd);
-                    $stmt->bindParam(':nifCli', $nif);
-                    $stmt->bindParam(':id_producto', $idProducto);
-                    $stmt->bindParam(':fechaCompra', $fecha);
-
-                    $stmt->execute();
+                    // y si ya existe la compra se actualiza sumando las unidades
+                    actualizarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
                     
                 }
                 $almacenes = almacenConStocks($idProducto, $conn);
@@ -251,6 +232,40 @@ function registrarCompra(){
             }
             echo "Error: " . $e->getMessage();
         }
+}
+
+function insertarCompra($conn, $nifCli , $idProd , $fechaCompr, $unidades){
+    try{    
+        $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO, FECHA_COMPRA, UNIDADES)
+                                VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
+        $stmt->bindParam(':nifCli', $nifCli);
+        $stmt->bindParam(':id_producto', $idProd);
+        $stmt->bindParam(':fechaCompra', $fechaCompr);
+        $stmt->bindParam(':unidades', $unidades);
+        $stmt->execute();
+
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+function actualizarCompra( $conn, $nifCli , $idProd , $fechaCompr, $unidades){
+    try{    
+        $stmt = $conn->prepare("UPDATE compra
+                                SET UNIDADES = UNIDADES + :unidades
+                                WHERE NIF = :nifCli
+                                AND ID_PRODUCTO = :id_producto
+                                AND FECHA_COMPRA = :fechaCompra");
+        $stmt->bindParam(':nifCli', $nifCli);
+        $stmt->bindParam(':id_producto', $idProd);
+        $stmt->bindParam(':fechaCompra', $fechaCompr);
+        $stmt->bindParam(':unidades', $unidades);
+        $stmt->execute();
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    }
 }
 
 function almacenConStocks($idProducto, $conn ){
