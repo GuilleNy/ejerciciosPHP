@@ -133,33 +133,41 @@ function comprobarCantidad(){
     $idProducto = depurar(obtenerCodProd($_POST['producto'])); 
     $cantProducto = depurar($_POST['cantidad']);
     $cantidadTotal = obtenerCantidadTotal($idProducto);
+    $stockDisponible = 0;
 
-    if(!isset($_COOKIE[$idProducto])){
-        crearCookie($idProducto, $cantidadTotal - $cantProducto); //creo la cookie con la cantidad restante
-    }else{
-        if($_COOKIE[$idProducto] < $cantProducto){
-            echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
-            $valido =  False;
-        }else{
-            $cantCookie = $_COOKIE[$idProducto];
-            crearCookie($idProducto, $cantCookie - $cantProducto); // actualizo la cookie con la cantidad restante
-        }
+   // Stock disponible según cookie o BD
+    if (!isset($_COOKIE[$idProducto])) {
+        $stockDisponible = $cantidadTotal;
+    } else {
+        $stockDisponible = $_COOKIE[$idProducto];
     }
-    
+
+    // Validación REAL
+    if ($stockDisponible < $cantProducto) {
+        echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
+        crearCookie($idProducto, 0);
+        $valido = False;
+    }else{
+         $nuevoStock = $stockDisponible - $cantProducto;
+        crearCookie($idProducto, $nuevoStock);
+    }
+
+    // Actualizar cookie con el stock restante
+   
+
     return $valido;
 }
 
 #Funcion que obtiene la cantidad total disponible de un producto en todos los almacenes.
 function obtenerCantidadTotal($idProd){
     $conn = conexion_BBDD();
-    $cantidad = 0;
+    
     try{    
         $stmt = $conn->prepare("SELECT sum(CANTIDAD) as cantidadTotal 
                                 FROM almacena
                                 WHERE ID_PRODUCTO = :id_producto
-                                AND CANTIDAD > :cant");
+                                AND CANTIDAD > 0");
         $stmt->bindParam(':id_producto', $idProd);
-        $stmt->bindParam(':cant', $cantidad);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $unidades=$stmt->fetch();
