@@ -94,9 +94,7 @@ echo "</pre>";
 
 <?php
 
-
 if(isset($_POST['añadirCesta'])){
-
     if(verifica_campo()){
         if(comprobarCantidad()){
             $producto = $_POST['producto'];
@@ -106,20 +104,12 @@ if(isset($_POST['añadirCesta'])){
         } 
     }
 }else if(isset($_POST['pedido'])){
-    
     registrarCompra();
-    
-    
     vaciarCesta();
-    
-    
     #$importeTotal=precioTotalCesta();//func_sesiones.php 
-    
 }else if(isset($_POST['vaciar'])){
     vaciarCesta();
     header("Refresh: 0");
-
-
 }else if(isset($_POST['atras'])){
     header("Location: ./com_inicio_cli.php");
 }
@@ -186,12 +176,6 @@ function obtenerCodProd($cadena){
     return $arrayDatos[0];
 }
 
-
-
-
-
-//ya hice el añadir cesta ahora falta registrar compra, queda pendiente en hacerlo. pa mañana
-
 function registrarCompra(){
     $conn = conexion_BBDD();
 
@@ -206,54 +190,51 @@ function registrarCompra(){
             foreach ($cestaProductos as $productos => $detalles) {
                 $idProducto = $detalles[0];
                 $cantidadProd = $detalles[3]; //3
-                $numAlmacen = almacenConStocks($detalles[0], $conn ); //obtengo los almacenes que tenga stock del producto
+        
+                if (!verificarDuplicado($conn, $nif, $idProducto, $fecha)) {
+                    // NO existe → INSERT
+                    $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO, FECHA_COMPRA, UNIDADES)
+                        VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)
+                    ");
+                    $stmt->bindParam(':nifCli', $nif);
+                    $stmt->bindParam(':id_producto', $idProducto);
+                    $stmt->bindParam(':fechaCompra', $fecha);
+                    $stmt->bindParam(':unidades', $cantidadProd);
 
-            
-                        /*
-                        if(verificarDuplicado($conn, $nif , $idProducto , $fecha)){ // True si hay duplicado de fecha entonces actualizo la cantidad de Unidades del mismo cliente , del mismo producto de la misma fecha.
-                            for ($i=0; $i < $cantidadProd; $i++) { 
-                                actualizarCantCompra($conn, $nif , $idProducto , $fecha);   // Actualizo la cantidad de unidades en la tabla compra
-                                actualizarCantidadAlmacena($conn, $numAlmacen["NUM_ALMACEN"], $idProducto, 1); // Actualizo la cantidad de unidades en la tabla almacena
-                            }
-                            echo "Se ha completado la compra.";
-                            $cantidadProd = 0;
-                        }else{
-                        */
-                            $cantFinal = $cantidadProd; // la cantidad que se va a insertar en la tabla compra
+                    $stmt->execute();
+                    
+                } else {
+                    // SÍ existe → UPDATE
+                    $stmt = $conn->prepare("UPDATE compra
+                                            SET UNIDADES = UNIDADES + :unidades
+                                            WHERE NIF = :nifCli
+                                            AND ID_PRODUCTO = :id_producto
+                                            AND FECHA_COMPRA = :fechaCompra
+                    ");
+                    $stmt->bindParam(':unidades', $cantidadProd);
+                    $stmt->bindParam(':nifCli', $nif);
+                    $stmt->bindParam(':id_producto', $idProducto);
+                    $stmt->bindParam(':fechaCompra', $fecha);
 
-                            $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO , FECHA_COMPRA, UNIDADES) VALUES (:nifCli, :id_producto, :fechaCompra, :unidades)");
-                            $stmt->bindParam(':nifCli', $nif);
-                            $stmt->bindParam(':id_producto', $idProducto);
-                            $stmt->bindParam(':fechaCompra', $fecha);
-                            $stmt->bindParam(':unidades', $cantFinal);
+                    $stmt->execute();
+                    
+                }
+                $almacenes = almacenConStocks($idProducto, $conn);
+                $restante = $cantidadProd;
+
+                foreach ($almacenes as $alm) {
+                    // Cuánto puedo descontar de este almacén
+                    $descontar = min($alm['CANTIDAD'], $restante);
+                    actualizarCantidadAlmacena($conn, $alm['NUM_ALMACEN'], $idProducto, $descontar);
+                    $restante -= $descontar;
+                }
                 
-                            if($stmt->execute()){
-                                echo "Compra del producto " . $detalles[1] . " registrada correctamente.<br>";
-                            }
-                            
-                        
-                            /*
-                            if($stmt->execute()){
-
-                                foreach ($numAlmacen as $fila){
-                                
-                                        $cantFinal -= $fila["CANTIDAD"];
-                                        actualizarCantidadAlmacena($conn, $fila["NUM_ALMACEN"], $idProducto, $fila["CANTIDAD"]);
-                                    
-                                    $cantidadProd = $cantFinal;
-                                }
-                                
-                            }
-                                */
-                        /*
-                        }
-                        */
             }
         }else{
             echo "La cesta esta vacia, no se puede registrar la compra.<br>";
         }
-        
-    $conn->commit();//importante para realizar cualquier accion de modificacion.
+    $conn->commit();
+    echo "Compra realizada con éxito.";
 
     }catch(PDOException $e)
         {
@@ -266,10 +247,11 @@ function registrarCompra(){
 
 function almacenConStocks($idProducto, $conn ){
      try{    
-        $stmt = $conn->prepare("SELECT NUM_ALMACEN  
+        $stmt = $conn->prepare("SELECT NUM_ALMACEN, CANTIDAD 
                                 FROM almacena 
                                 WHERE ID_PRODUCTO = :idProd
-                                AND CANTIDAD > 0 ");
+                                AND CANTIDAD > 0 
+                                ORDER BY CANTIDAD DESC");
         $stmt->bindParam(':idProd', $idProducto);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -280,9 +262,6 @@ function almacenConStocks($idProducto, $conn ){
     }
     return $datosAlmacen;
 }
-
-
-
 
 //Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto.
 function verificarDuplicado($conn, $nifCli , $idProd , $fechaCompr){
@@ -311,101 +290,23 @@ function verificarDuplicado($conn, $nifCli , $idProd , $fechaCompr){
 }
 
 //Funcion que actualiza la Cantidad de los productos una vez que se realiza una compra. enla tabla almacena
-function actualizarCantidadAlmacena($conn, $num_alm, $idProd, $cantAntigua){
-    $cantNew = $cantAntigua - 1;
+function actualizarCantidadAlmacena($conn, $num_alm, $idProd, $cant){
 
     try{  
         $stmt = $conn->prepare("UPDATE almacena
-                                SET CANTIDAD = :cantidad
+                                SET CANTIDAD = CANTIDAD - :cantidad
                                 WHERE NUM_ALMACEN = :num_almacen
-                                AND ID_PRODUCTO = :id_producto");
+                                AND ID_PRODUCTO = :id_producto
+                                AND CANTIDAD > 0");
         $stmt->bindParam(':num_almacen', $num_alm);
         $stmt->bindParam(':id_producto', $idProd);
-        $stmt->bindParam(':cantidad', $cantNew);
-        
-        if($stmt->execute()){
-            echo "Cantidad actualizada correctamente.<br>";
-        }
-    }catch(PDOException $e)
-    {
-        echo "Error: " . $e->getMessage();
-    }
-}
-
-//Funcion que envia la CANTIDAD que esta disponible
-function verificarCantProd($conn, $idProducto, $numAlm){
-     try{    
-        $stmt = $conn->prepare("SELECT CANTIDAD  
-                                FROM almacena 
-                                WHERE ID_PRODUCTO = :idProd
-                                AND NUM_ALMACEN = :numAlm");
-        $stmt->bindParam(':idProd', $idProducto);
-        $stmt->bindParam(':numAlm', $numAlm);
+        $stmt->bindParam(':cantidad', $cant);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $datos=$stmt->fetch();
-
-        if(empty($datos)){
-            $datos = 0;
-            echo "No existe este producto en el almacen indicado. ";
-        }else{
-            $datos = $datos['CANTIDAD'];
-        }
+     
     }catch(PDOException $e)
     {
         echo "Error: " . $e->getMessage();
     }
-    return $datos;
 }
-
-
-//Funcion que actualiza el campo UNIDADES de la tabla compra, por si hay una compra realizada por el mismo cliente en el mismo dia con el mismo producto.
-function actualizarCantCompra($conn, $nifCli , $idProd , $fechaCompr){
-
-    $ultimaUni = obtenerUltimaUnidad($conn, $nifCli , $idProd , $fechaCompr);
-    $unidadesTotal = $ultimaUni + 1;
-
-    try{  
-        $stmt = $conn->prepare("UPDATE compra
-                                SET UNIDADES = :cantidad
-                                WHERE NIF = :nifCli
-                                AND ID_PRODUCTO = :id_producto
-                                AND FECHA_COMPRA = :fechCompra");
-        $stmt->bindParam(':nifCli', $nifCli);
-        $stmt->bindParam(':id_producto', $idProd);
-        $stmt->bindParam(':fechCompra', $fechaCompr);
-        $stmt->bindParam(':cantidad', $unidadesTotal);
-        
-        if($stmt->execute()){
-            echo "Cantidad actualizada correctamente.<br>";
-        }
-    }catch(PDOException $e)
-    {
-        echo "Error: " . $e->getMessage();
-    }
-
-}
-//Funcion que obtiene la ultima Unidad de la tabla compra.
-function obtenerUltimaUnidad($conn, $nifCli , $idProd , $fechaCompr){
-     try{    
-        $stmt = $conn->prepare("SELECT UNIDADES  
-                                FROM compra 
-                                WHERE NIF = :nifCli
-                                AND ID_PRODUCTO = :id_producto
-                                AND FECHA_COMPRA = :fechCompra");
-        $stmt->bindParam(':nifCli', $nifCli);
-        $stmt->bindParam(':id_producto', $idProd);
-        $stmt->bindParam(':fechCompra', $fechaCompr);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $unidades=$stmt->fetch();
-    }catch(PDOException $e)
-    {
-        echo "Error: " . $e->getMessage();
-    }
-    return intval($unidades['UNIDADES']);
-
-}
-
 
 ?>
