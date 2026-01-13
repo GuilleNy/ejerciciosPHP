@@ -135,14 +135,14 @@ function comprobarCantidad(){
     $cantidadTotal = obtenerCantidadTotal($idProducto);
     $stockDisponible = 0;
 
-   // Stock disponible según cookie o BD
+   // Stock disponible en la cookie
     if (!isset($_COOKIE[$idProducto])) {
         $stockDisponible = $cantidadTotal;
     } else {
         $stockDisponible = $_COOKIE[$idProducto];
     }
 
-    // Validación REAL
+    //compara el stock disponible del producto con la cantidad que pide el cliente
     if ($stockDisponible < $cantProducto) {
         echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
         crearCookie($idProducto, 0);
