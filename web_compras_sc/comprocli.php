@@ -10,13 +10,10 @@ if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
 }
-echo "<pre>";
-    print_r($_SESSION);
-echo "</pre>";
 
-echo "<pre>";
-print_r($_COOKIE);
-echo "</pre>";
+var_dump($_SESSION);
+
+var_dump($_COOKIE);
 
 ?>
 
@@ -93,7 +90,7 @@ echo "</pre>";
 
 
 <?php
-
+/********************************** PROGRAMA PRINCIPAL ************************************/
 if(isset($_POST['añadirCesta'])){
     if(verifica_campo()){
         if(comprobarCantidad()){
@@ -114,7 +111,9 @@ if(isset($_POST['añadirCesta'])){
     header("Location: ./com_inicio_cli.php");
 }
 
-#Funcion que verifica que se haya seleccionado un producto.
+/************************************* FUNCIONES ******************************************/
+
+//Funcion que verifica que se haya seleccionado un producto.
 function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
@@ -127,7 +126,7 @@ function verifica_campo(){
     return $enviar;
 }
 
-#Funcion que comprueba si la cantidad solicitada del producto seleccionado esta disponible en los almacenes.
+//Funcion que comprueba si la cantidad solicitada del producto seleccionado esta disponible en los almacenes.
 function comprobarCantidad(){
     $valido = True;
     $idProducto = depurar(obtenerCodProd($_POST['producto'])); 
@@ -141,7 +140,6 @@ function comprobarCantidad(){
     } else {
         $stockDisponible = $_COOKIE[$idProducto];
     }
-
     //compara el stock disponible del producto con la cantidad que pide el cliente
     if ($stockDisponible < $cantProducto) {
         echo "No hay suficientes unidades del producto seleccionado en los almacenes.<br>";
@@ -153,12 +151,10 @@ function comprobarCantidad(){
     }
 
     // Actualizar cookie con el stock restante
-   
-
     return $valido;
 }
 
-#Funcion que obtiene la cantidad total disponible de un producto en todos los almacenes.
+//Funcion que obtiene la cantidad total disponible de un producto en todos los almacenes.
 function obtenerCantidadTotal($idProd){
     $conn = conexion_BBDD();
     
@@ -178,12 +174,13 @@ function obtenerCantidadTotal($idProd){
     }
 }
 
-#Funcion que obtiene el codigo del producto a partir de la cadena recibida desde el formulario en donde se selecciona el producto.
+//Funcion que obtiene el codigo del producto a partir de la cadena recibida desde el formulario en donde se selecciona el producto.
 function obtenerCodProd($cadena){
     $arrayDatos = explode("|", $cadena);
     return $arrayDatos[0];
 }
 
+//Funcion que registra la compra en la tabla compra y actualiza los stocks en la tabla almacena
 function registrarCompra(){
     $conn = conexion_BBDD();
 
@@ -206,7 +203,6 @@ function registrarCompra(){
                 } else {
                     // y si ya existe la compra se actualiza sumando las unidades
                     actualizarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
-                    
                 }
                 $almacenes = almacenConStocks($idProducto, $conn);
                 $restante = $cantidadProd;
@@ -217,7 +213,6 @@ function registrarCompra(){
                     actualizarCantidadAlmacena($conn, $alm['NUM_ALMACEN'], $idProducto, $descontar);
                     $restante -= $descontar;
                 }
-                
             }
         }else{
             echo "La cesta esta vacia, no se puede registrar la compra.<br>";
@@ -225,8 +220,7 @@ function registrarCompra(){
     $conn->commit();
     echo "Compra realizada con éxito.";
 
-    }catch(PDOException $e)
-        {
+    }catch(PDOException $e){
             if ($conn->inTransaction()) {
                 $conn->rollBack(); 
             }
@@ -234,6 +228,7 @@ function registrarCompra(){
         }
 }
 
+//Funcion que inserta una nueva compra en la tabla compra
 function insertarCompra($conn, $nifCli , $idProd , $fechaCompr, $unidades){
     try{    
         $stmt = $conn->prepare("INSERT INTO compra (NIF, ID_PRODUCTO, FECHA_COMPRA, UNIDADES)
@@ -250,6 +245,7 @@ function insertarCompra($conn, $nifCli , $idProd , $fechaCompr, $unidades){
     }
 }
 
+//Funcion que actualiza la cantidad de unidades en una compra ya existe en la tabla compra
 function actualizarCompra( $conn, $nifCli , $idProd , $fechaCompr, $unidades){
     try{    
         $stmt = $conn->prepare("UPDATE compra
@@ -268,6 +264,7 @@ function actualizarCompra( $conn, $nifCli , $idProd , $fechaCompr, $unidades){
     }
 }
 
+//Funcion que obtiene los almacenes que tienen stock del producto seleccionado
 function almacenConStocks($idProducto, $conn ){
      try{    
         $stmt = $conn->prepare("SELECT NUM_ALMACEN, CANTIDAD 
@@ -286,7 +283,7 @@ function almacenConStocks($idProducto, $conn ){
     return $datosAlmacen;
 }
 
-//Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto.
+//Funcion que verifica si ya existe una compra realizada por el mismo cliente en el mismo dia con el mismo producto
 function verificarDuplicado($conn, $nifCli , $idProd , $fechaCompr){
     $enviar = False;
     try{    

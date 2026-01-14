@@ -82,6 +82,7 @@ if(isset($_POST['registrarse'])){
 
 /*************************************************************************** */
 
+//Funcion para verificar que los campos del formulario no esten vacios
 function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
@@ -121,6 +122,7 @@ function verifica_campo(){
     return $enviar;
 }
 
+//Funcion que registra el cliente en la base de datos
 function registrarCliente(){
     
         $conn = conexion_BBDD();
@@ -144,6 +146,7 @@ function registrarCliente(){
         $conn->commit();//importante para realizar cualquier accion de modificacion.
 }
 
+//Funcion que inserta el cliente en la tabla cliente
 function insertarCliente($conn, $nif, $nombre, $apellido, $cp, $direccion, $ciudad, $clave){
     try{
         $stmt = $conn->prepare("INSERT INTO cliente (NIF , NOMBRE, APELLIDO, CP, DIRECCION, CIUDAD, CLAVE) 
@@ -156,15 +159,15 @@ function insertarCliente($conn, $nif, $nombre, $apellido, $cp, $direccion, $ciud
         $stmt->bindParam(':ciudadCli', $ciudad);
         $stmt->bindParam(':claveCli', $clave);
         $stmt->execute();
-    }catch(PDOException $e)
-        {
-            if ($conn->inTransaction()) {
-                $conn->rollBack(); 
-            }
-            echo "Error: " . $e->getMessage();
+    }catch(PDOException $e){
+        if ($conn->inTransaction()) {
+            $conn->rollBack(); 
         }
+        echo "Error: " . $e->getMessage();
+    }
 }
 
+//Funcion que verifica si el cliente ya existe en la base de datos
 function verificarCliente($nifCli){
     $conn = conexion_BBDD();
     try{    
@@ -175,12 +178,11 @@ function verificarCliente($nifCli){
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $cliente=$stmt->fetch();
-
+        return $cliente;
     }catch(PDOException $e)
         {
             echo "Error: " . $e->getMessage();
-        }
-    return $cliente;
+        } 
 }
 
 ?>

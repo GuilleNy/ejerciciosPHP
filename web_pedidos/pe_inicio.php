@@ -3,10 +3,10 @@ session_start();
 include_once "func_sesiones.php";
 
 
-#Aqui verifico si la session sigue activa, en el caso de que no esta vuelve a la pagina del login
+#Aqui verifico si la session sigue activa, en el caso de que NO esta vuelve a la pagina del login
 if(!verificarSesion())
 {
-	header("Location: ./comlogincli.php");
+	header("Location: ./pe_login.php");
 }
 var_dump($_SESSION);
 ?>

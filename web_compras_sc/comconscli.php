@@ -8,9 +8,9 @@ if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
 }
-echo "<pre>";
-    print_r($_SESSION);
-echo "</pre>";
+
+var_dump($_SESSION);
+
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +64,7 @@ if(isset($_POST['consultar'])){
     header("Location: ./com_inicio_cli.php");
 }
 
-#Funcion que verifica que se haya seleccionado un producto.
+//Funcion que verifica que se haya seleccionado un producto
 function verifica_campo(){
     $mensaje = ""; 
     $enviar = True;  
@@ -81,6 +81,7 @@ function verifica_campo(){
     return $enviar;
 }
 
+//Funcion que visualiza las compras realizadas por el cliente en un rango de fechas
 function visualizarCompras(){
     $nif = devolverNIF();
     $fecha_desde =depurar($_POST['fechaDesde']);   
@@ -109,6 +110,7 @@ function visualizarCompras(){
         }
 }
 
+//Funcion que obtiene las compras realizadas por el cliente en un rango de fechas
 function obtenerCompras($nif, $fecha_desde, $fecha_hasta){
     $conn = conexion_BBDD();
     try{    
@@ -123,12 +125,11 @@ function obtenerCompras($nif, $fecha_desde, $fecha_hasta){
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $all_productos=$stmt->fetchAll();
+        return $all_productos;
     }catch(PDOException $e)
         {
             echo "Error: " . $e->getMessage();
         }
-
-    return $all_productos;
 }
 
 
