@@ -214,26 +214,10 @@ function registrarCompra(){
                     echo "Compra realizada con éxito.";
                 }
 
-
-
-
-                //Verificar esto y porque funciona
+                //actualizar el stock en la tabla almacena
                 $almacenes = almacenConStocks($idProducto, $conn);
-                $restante = $cantidadProd;
-
-                foreach ($almacenes as $alm) {
-                    // Cuánto puedo descontar de este almacén
-                    $descontar = min($alm['CANTIDAD'], $restante);
-                    actualizarCantidadAlmacena($conn, $alm['NUM_ALMACEN'], $idProducto, $descontar);
-                    $restante -= $descontar;
-                }
-                /********************************************************************************* */
-
-
-
-
-
-                
+                actualizarCantidadAlmacena($conn, $almacenes['NUM_ALMACEN'], $idProducto, $cantidadProd);
+        
             }
         }else{
             echo "La cesta esta vacia, no se puede registrar la compra.<br>";
@@ -291,12 +275,11 @@ function almacenConStocks($idProducto, $conn ){
         $stmt = $conn->prepare("SELECT NUM_ALMACEN, CANTIDAD 
                                 FROM almacena 
                                 WHERE ID_PRODUCTO = :idProd
-                                AND CANTIDAD > 0 
-                                ORDER BY CANTIDAD DESC");
+                                AND CANTIDAD > 0");
         $stmt->bindParam(':idProd', $idProducto);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $datosAlmacen=$stmt->fetchAll();
+        $datosAlmacen=$stmt->fetch();
     }catch(PDOException $e)
     {
         echo "Error: " . $e->getMessage();
