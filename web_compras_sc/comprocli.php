@@ -10,11 +10,13 @@ if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
 }
+echo '<pre>';
+    print_r($_SESSION);
+echo '</pre>';
 
-var_dump($_SESSION);
-
-var_dump($_COOKIE);
-
+echo '<pre>';
+    print_r($_COOKIE);
+echo '</pre>';
 ?>
 
 
@@ -93,12 +95,16 @@ var_dump($_COOKIE);
 /********************************** PROGRAMA PRINCIPAL ************************************/
 if(isset($_POST['añadirCesta'])){
     if(verifica_campo()){
+        /*
         if(comprobarCantidad()){
+        */
             $producto = $_POST['producto'];
             $cantProducto = depurar($_POST['cantidad']);
             annadirCesta($producto, $cantProducto);//func_sesiones.php
             header("Refresh: 0");
+        /*
         } 
+        */
     }
 }else if(isset($_POST['pedido'])){
     registrarCompra();
@@ -127,6 +133,7 @@ function verifica_campo(){
 }
 
 //Funcion que comprueba si la cantidad solicitada del producto seleccionado esta disponible en los almacenes.
+/*
 function comprobarCantidad(){
     $valido = True;
     $idProducto = depurar(obtenerCodProd($_POST['producto'])); 
@@ -153,7 +160,7 @@ function comprobarCantidad(){
     // Actualizar cookie con el stock restante
     return $valido;
 }
-
+*/
 //Funcion que obtiene la cantidad total disponible de un producto en todos los almacenes.
 function obtenerCantidadTotal($idProd){
     $conn = conexion_BBDD();
@@ -199,11 +206,18 @@ function registrarCompra(){
                 if (!verificarDuplicado($conn, $nif, $idProducto, $fecha)) {
                     //si no existe la compra se hara un insert
                     insertarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
+                    echo "Compra realizada con éxito.";
                     
                 } else {
                     // y si ya existe la compra se actualiza sumando las unidades
                     actualizarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
+                    echo "Compra realizada con éxito.";
                 }
+
+
+
+
+                //Verificar esto y porque funciona
                 $almacenes = almacenConStocks($idProducto, $conn);
                 $restante = $cantidadProd;
 
@@ -213,12 +227,19 @@ function registrarCompra(){
                     actualizarCantidadAlmacena($conn, $alm['NUM_ALMACEN'], $idProducto, $descontar);
                     $restante -= $descontar;
                 }
+                /********************************************************************************* */
+
+
+
+
+
+                
             }
         }else{
             echo "La cesta esta vacia, no se puede registrar la compra.<br>";
         }
     $conn->commit();
-    echo "Compra realizada con éxito.";
+    
 
     }catch(PDOException $e){
             if ($conn->inTransaction()) {

@@ -6,7 +6,9 @@ include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
 include_once "consultas_db.php";
 
-
+echo '<pre>';
+    print_r($_SESSION);
+echo '</pre>';
 ?>
 <!DOCTYPE html>
 <html lang="es">

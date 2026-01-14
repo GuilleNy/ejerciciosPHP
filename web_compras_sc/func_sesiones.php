@@ -6,11 +6,14 @@ function crearSesion($usuario, $contraseña){
 }
 
 function eliminarSesionYRedirigir(){
-    session_destroy();
+
     session_unset();
+    session_destroy();
+    
     setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
 
     header("Location: ./comlogincli.php");
+    exit;
 }
 
 function verificarSesion(){
@@ -37,18 +40,38 @@ function eliminarCookie($nombreCookie){
 
 function annadirCesta($producto, $cantProducto){
     $cadena = $producto . "|" . $cantProducto;
-    
     $detallesProductos=explode("|", $cadena);
 
     if (isset($_SESSION["compra"])) {
         $cestaProducto = $_SESSION["compra"];
-        $cestaProducto[] = $detallesProductos;
+        $encontrado = false;
+
+        foreach ($cestaProducto as $key => $productoCesta) {
+            if ($productoCesta[0] == $detallesProductos[0]) {
+                // Si el producto ya existe en la cesta se actualiza la cantidad
+                
+                $cestaProducto[$key][3] += $detallesProductos[3];
+                $cestaProducto[$key][2] += $detallesProductos[2] * $detallesProductos[3];
+                $encontrado = true;
+            }
+        }
+
+        if (!$encontrado) {
+            // Si el producto no existe en la cesta se le añade
+            $cestaProducto[] = $detallesProductos;
+        }
+        $_SESSION["compra"] = $cestaProducto;
     } else {
         $cestaProducto = array();
         $cestaProducto[] = $detallesProductos;
+        for($i = 0; $i < count($cestaProducto); $i++){
+            $cestaProducto[$i][2] = $cestaProducto[$i][2] * $cestaProducto[$i][3];
+        }
+
+        $_SESSION["compra"] = $cestaProducto;
     }
 
-    $_SESSION["compra"] = $cestaProducto;
+    
 }
 
 function devolverCesta()
@@ -80,7 +103,7 @@ function precioTotalCesta(){
 
     if($cesta != null){
         foreach ($cesta as $productoCesta => $detalles) {
-            $precioTotal += $detalles[2] * $detalles[3];
+            $precioTotal += $detalles[2];
         }
     }
    

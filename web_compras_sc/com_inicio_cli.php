@@ -8,7 +8,9 @@ if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
 }
-var_dump($_SESSION);
+echo '<pre>';
+    print_r($_SESSION);
+echo '</pre>';
 ?>
 
 <html lang="es">
