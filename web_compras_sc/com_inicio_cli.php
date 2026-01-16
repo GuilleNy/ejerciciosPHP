@@ -69,10 +69,10 @@ if(isset($_POST['consultarCompras'])){
 }
 
 if(isset($_POST['logout'])){
-    if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
-        header("Location: comlogoutcli.php");
-        exit();
-    }
+    
+    header("Location: comlogoutcli.php");
+    exit();
+    
 }  
 
 

@@ -4,10 +4,11 @@ include_once "func_sesiones.php";
 
 
 #Aqui verifico si la session sigue activa, en el caso de que NO esta vuelve a la pagina del login
-if(!verificarSesion())
+if(!verificarSesion()) //func_sesiones.php
 {
 	header("Location: ./pe_login.php");
 }
+
 echo '<pre>';
     print_r($_SESSION);
 echo '</pre>';
@@ -59,12 +60,18 @@ echo '</pre>';
 
 if (isset($_POST['compraProd'])){
     header("Location: ./comprocli.php");
-}else if(isset($_POST['consultarCompras'])){
+    exit();
+}
+
+if(isset($_POST['consultarCompras'])){
     header("Location: ./comconscli.php");
-}else if(isset($_POST['logout'])){
-    if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
-        eliminarSesionYRedirigir();
-    }
+    exit();
+}
+
+if(isset($_POST['logout'])){
+    header("Location: comlogoutcli.php");
+    exit();
+    
 }  
 
 

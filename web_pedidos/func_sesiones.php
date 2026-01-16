@@ -6,7 +6,6 @@ function crearSesion($usuario, $contraseña){
     
 }
 
-
 function verificarSesion(){
     $sessionCreada=false;
     if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
@@ -14,6 +13,20 @@ function verificarSesion(){
     }
     return $sessionCreada;
 }
+
+function iniciarSesion($usu, $contra){
+    //si no esta creada la sesion crearmela
+    if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
+        crearSesion($usu, $contra);
+    }
+    //Si la sesion del usario con su contraseña esta creada , esta puede acceder al inicio de la pagina
+    if(verificarSesion()){
+        header("Location: ./pe_inicio.php");
+        exit(); 
+    }
+}
+
+
 
 function crearCookie($nombreCookie, $valorCookie){
     setcookie($nombreCookie, $valorCookie, time() + (86400 * 30), "/");

@@ -90,9 +90,12 @@ function verificarLogin($usuario, $clave){
     $enviar = False;
     $dato=datosUsuario($usuario, $clave);
 
-    if((low($dato['NOMBRE']) == low($usuario)) && ($dato['CLAVE'] == $clave)){
-        $enviar = True;
+    if($dato !== false){
+        if((low($dato['NOMBRE']) == low($usuario)) && ($dato['CLAVE'] == $clave)){
+            $enviar = True;
+        }
     }
+    
     return $enviar;
 }
 

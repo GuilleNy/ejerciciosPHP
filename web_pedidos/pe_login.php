@@ -2,8 +2,8 @@
 <?php
 
 include "otras_funciones.php";
+include "consultas_db.php";
 include "func_sesiones.php";
-include_once "db/BBDD_pedidos.php";
 
 echo '<pre>';
     print_r($_COOKIE);
@@ -47,78 +47,15 @@ echo '</pre>';
 
 <?php
 if(isset($_POST['login'])){ 
-    if (verifica_campo()) {
-        list($usuario, $clave)=recogerDatos();
-        if(verificarLogin($usuario, $clave)){
-            iniciarSesion($usuario, $clave);
+    if (verifica_campo()) { //otras_funciones.php
+        list($usuario, $clave)=recogerDatos();//otras_funciones.php
+        if(comprobarLogin($usuario, $clave)){ //consulta_db.php
+            iniciarSesion($usuario, $clave);//func_sesiones.php
         }else{
             echo "Usuario o contraseña incorrecto.";
         }    
     }         
 }
 
-
-function verifica_campo(){
-    $mensaje = ""; 
-    $enviar = True;  
-
-    if (empty($_POST['usuario'])) {
-        $mensaje .= "El campo Usuario esta vacio. <br>";
-        $enviar = False;  
-    }
-
-    if (empty($_POST['clave'])) {
-        $mensaje .= "El campo Clave esta vacio. <br>";
-        $enviar = False;  
-    }
-    echo $mensaje;
-    return $enviar;
-}
-
-function verificarLogin($usuario, $clave){
-    $enviar = False;
-    $dato=datosUsuario($usuario, $clave);
-
-    if(($dato['customerNumber'] == $usuario) && ($dato['contactLastName'] == $clave)){
-        $enviar = True;
-    }
-    return $enviar;
-}
-
-function recogerDatos(){
-    $nomUsuario=depurar($_POST['usuario']);
-    $contrUsuario=depurar($_POST['clave']);
-    return [$nomUsuario, $contrUsuario];
-}
-
-function datosUsuario($usuario, $clave){
-    $conn = conexion_BBDD();
-    try{    
-        $stmt = $conn->prepare("SELECT customerNumber , contactLastName  
-                                FROM customers 
-                                WHERE customerNumber = :numCli 
-                                AND contactLastName = :apellidoCli");
-        $stmt->bindParam(':numCli', $usuario);
-        $stmt->bindParam(':apellidoCli', $clave);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $datos=$stmt->fetch();
-        return $datos;
-    }catch(PDOException $e)
-        {
-            echo "Error: " . $e->getMessage();
-        } 
-}
-
-function iniciarSesion($usu, $contra){
-    //si no esta creada la sesion crearmela
-    if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
-        crearSesion($usu, $contra);
-    }
-    //Si la sesion del usario con su contraseña esta creada , esta puede acceder al inicio de la pagina
-    if(verificarSesion()){
-        header("Location: ./pe_inicio.php");
-    }
-}
 
 ?>

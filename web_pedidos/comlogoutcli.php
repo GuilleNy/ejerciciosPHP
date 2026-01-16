@@ -3,6 +3,6 @@
     setcookie(session_name(), '', time() - 3600, '/');
     session_destroy();
 
-    header("Location: comlogincli.php");
+    header("Location: pe_login.php");
     exit();
 ?>
