@@ -6,8 +6,9 @@ include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
 include_once "consultas_db.php";
 
+
 echo '<pre>';
-    print_r($_SESSION);
+    print_r($_COOKIE);
 echo '</pre>';
 ?>
 <!DOCTYPE html>
@@ -60,6 +61,7 @@ if(isset($_POST['login'])){
     }         
 }else if(isset($_POST['registrarse']))
 {
+    
     header("Location: ./comregcli.php");
 }
 /************************************* FUNCIONES ******************************************/

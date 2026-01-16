@@ -16,6 +16,13 @@ function eliminarSesionYRedirigir(){
     exit;
 }
 
+function eliminarSesion(){
+    session_unset();
+    session_destroy();
+    
+    setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
+}
+
 function verificarSesion(){
     $sessionCreada=false;
     if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){

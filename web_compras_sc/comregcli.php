@@ -3,7 +3,9 @@
 
 include "otras_funciones.php";
 include_once "db/BBDD_empaltadpto.php";
-
+echo '<pre>';
+    print_r($_COOKIE);
+echo '</pre>';
 ?>
 
 
