@@ -78,7 +78,7 @@ echo '</pre>';
             print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Id Producto</th><th>Nombre Producto</th><th>Cantidad</th><th>Precio</th></tr>';
             
             foreach ($cesta as $productoCesta => $detalles) {
-                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[3]."</td><td>".$detalles[2]."</td></tr>";
+                print "<tr><td>".$detalles[0]."</td><td>".$detalles[1]."</td><td>".$detalles[3]."</td><td>".$detalles[4]."</td></tr>";
             }
             print "</tr>";
             print "<tr><td colspan='3'><strong>Precio Total:</strong></td><td><strong>" . $precioTotal . " €</strong></td></tr>";
@@ -206,18 +206,18 @@ function registrarCompra(){
                 if (!verificarDuplicado($conn, $nif, $idProducto, $fecha)) {
                     //si no existe la compra se hara un insert
                     insertarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
-                    echo "Compra realizada con éxito.";
+                    
                     
                 } else {
                     // y si ya existe la compra se actualiza sumando las unidades
                     actualizarCompra($conn, $nif, $idProducto, $fecha, $cantidadProd);
-                    echo "Compra realizada con éxito.";
+                   
                 }
 
                 //actualizar el stock en la tabla almacena
                 $almacenes = almacenConStocks($idProducto, $conn);
                 actualizarCantidadAlmacena($conn, $almacenes['NUM_ALMACEN'], $idProducto, $cantidadProd);
-        
+                echo "Compra realizada con éxito.";
             }
         }else{
             echo "La cesta esta vacia, no se puede registrar la compra.<br>";
