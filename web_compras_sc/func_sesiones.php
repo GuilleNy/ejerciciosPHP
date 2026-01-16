@@ -1,26 +1,9 @@
 <?php
 function crearSesion($usuario, $contraseña){
+    session_start();
     $_SESSION["VstUsuario"]=$usuario;
     $_SESSION["VstContraseña"]=$contraseña;
     
-}
-
-function eliminarSesionYRedirigir(){
-
-    session_unset();
-    session_destroy();
-    
-    setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
-
-    header("Location: ./comlogincli.php");
-    exit;
-}
-
-function eliminarSesion(){
-    session_unset();
-    session_destroy();
-    
-    setcookie("PHPSESSID", "" , time() - (86400 * 30), "/",$_SERVER['HTTP_HOST']);
 }
 
 function verificarSesion(){

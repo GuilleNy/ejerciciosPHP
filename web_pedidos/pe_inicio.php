@@ -8,7 +8,12 @@ if(!verificarSesion())
 {
 	header("Location: ./pe_login.php");
 }
-var_dump($_SESSION);
+echo '<pre>';
+    print_r($_SESSION);
+echo '</pre>';
+echo '<pre>';
+    print_r($_COOKIE);
+echo '</pre>';
 ?>
 
 <html lang="es">

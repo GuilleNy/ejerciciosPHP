@@ -7,6 +7,7 @@ include_once "func_sesiones.php";
 if(!verificarSesion())
 {
 	header("Location: ./comlogincli.php");
+    exit();
 }
 echo '<pre>';
     print_r($_SESSION);
@@ -59,11 +60,18 @@ echo '</pre>';
 
 if (isset($_POST['compraProd'])){
     header("Location: ./comprocli.php");
-}else if(isset($_POST['consultarCompras'])){
+
+}
+
+if(isset($_POST['consultarCompras'])){
     header("Location: ./comconscli.php");
-}else if(isset($_POST['logout'])){
+
+}
+
+if(isset($_POST['logout'])){
     if(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"])){
-        eliminarSesionYRedirigir();
+        header("Location: comlogoutcli.php");
+        exit();
     }
 }  
 

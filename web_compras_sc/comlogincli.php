@@ -1,6 +1,6 @@
 
 <?php
-session_start();
+
 include "otras_funciones.php";
 include "func_sesiones.php";
 include_once "db/BBDD_empaltadpto.php";
@@ -54,6 +54,7 @@ if(isset($_POST['login'])){
     if (verifica_campo()) {
         list($usuario, $clave)=recogerDatos();
         if(verificarLogin($usuario, $clave)){
+            
             iniciarSesion($usuario, $clave);
         }else{
             echo "Usuario o contraseña incorrecto.";

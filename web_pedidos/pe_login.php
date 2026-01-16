@@ -1,10 +1,13 @@
 
 <?php
-session_start();
+
 include "otras_funciones.php";
 include "func_sesiones.php";
 include_once "db/BBDD_pedidos.php";
 
+echo '<pre>';
+    print_r($_COOKIE);
+echo '</pre>';
 ?>
 <!DOCTYPE html>
 <html lang="es">
