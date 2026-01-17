@@ -2,34 +2,57 @@
 <?php
 session_start();
 include "otras_funciones.php";
+include_once "consultas_db.php";
 include_once "func_sesiones.php";
 
-
-#Aqui verifico si la session sigue activa, en el caso de que NO esta vuelve a la pagina del login
-if(!verificarSesion()) //func_sesiones.php
+if(!verificarSesion())
 {
 	header("Location: ./pe_login.php");
 }
-
 echo '<pre>';
     print_r($_SESSION);
 echo '</pre>';
+
 echo '<pre>';
     print_r($_COOKIE);
 echo '</pre>';
+
+
+if(isset($_POST['añadirCesta'])){
+    if(verifica_campo_altaPedido()){
+        
+        $producto = $_POST['producto'];
+        $cantProducto = depurar($_POST['cantidad']);
+        annadirCesta($producto, $cantProducto);//func_sesiones.php
+        header("Refresh: 0");
+        
+    }
+}else if(isset($_POST['pedido'])){
+    registrarCompra();
+    vaciarCesta();
+    #$importeTotal=precioTotalCesta();//func_sesiones.php 
+}else if(isset($_POST['vaciar'])){
+    vaciarCesta();
+    header("Refresh: 0");
+}else if(isset($_POST['atras'])){
+    header("Location: ./pe_inicio.php");
+}
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Alta Pedido</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>Compra de Productos</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
 </head>
 
 <body>
-    <h1 class="text-center">Alta Pedidos</h1>
+    <h1 class="text-center">Compra de Productos</h1>
 
     <div class="container">
         <!--Aplicacion-->
@@ -42,13 +65,10 @@ echo '</pre>';
                         <select name="producto" class="form-control">
                             <option value="" disabled selected>-- Selecciona un Producto --</option>
                             <?php
-                                include_once  "consultas_db.php";
-                                $productos = obtenerProductos();
-                                
-                                foreach ($productos as $fila) {
+                                $producto= obtenerProductos();
+                                foreach ($producto as $fila) {
                                     echo "<option value=\"" . $fila['productCode'] ."|". $fila['productName'] ."|". $fila['buyPrice'] . "\">" . $fila['productName'] . "</option>";
                                 }
-                                    
                             ?>
                         </select>
                     </div>
@@ -63,7 +83,6 @@ echo '</pre>';
                         <input type="submit" name="vaciar" value="Vaciar Cesta"  class="btn btn-warning"> 
                         <input type="submit" name="pedido" value="Realizar Pedido"  class="btn btn-warning ">
                         <input type="submit" name="atras" value="Atras" class="btn btn-primary">
-                        
                     </div>
                 </form>
             </div>
@@ -88,34 +107,12 @@ echo '</pre>';
     ?>
 </body>
 
+
 </html>
 
 
 <?php
-//<a href="pe_inicio.php" class="btn btn-primary">Atrás</a>
-
-if(isset($_POST['añadirCesta'])){
-    if(verifica_campo_altaPedido()){
-        
-        $producto = $_POST['producto'];
-        $cantProducto = depurar($_POST['cantidad']);
-        annadirCesta($producto, $cantProducto);//func_sesiones.php
-        header("Refresh: 0");
-        exit(); 
-       
-    }
-}else if(isset($_POST['pedido'])){
-    registrarCompra();
-    vaciarCesta();
-    #$importeTotal=precioTotalCesta();//func_sesiones.php 
-}else if(isset($_POST['vaciar'])){
-    vaciarCesta();
-    header("Refresh: 0");
-    exit(); 
-}else if(isset($_POST['atras'])){
-    header("Location: ./pe_inicio.php");
-    exit(); 
-}
+/********************************** PROGRAMA PRINCIPAL ************************************/
 
 
 ?>

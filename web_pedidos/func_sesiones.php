@@ -73,9 +73,7 @@ function annadirCesta($producto, $cantProducto){
         $cestaProducto = array();
         $cestaProducto[] = $detallesProductos;
         $_SESSION["compra"] = $cestaProducto;
-    }
-
-    
+    } 
 }
 
 function devolverCesta()
