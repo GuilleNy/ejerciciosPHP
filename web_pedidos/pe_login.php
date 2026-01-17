@@ -47,7 +47,7 @@ echo '</pre>';
 
 <?php
 if(isset($_POST['login'])){ 
-    if (verifica_campo()) { //otras_funciones.php
+    if (verifica_campo_login()) { //otras_funciones.php
         list($usuario, $clave)=recogerDatos();//otras_funciones.php
         if(comprobarLogin($usuario, $clave)){ //consulta_db.php
             iniciarSesion($usuario, $clave);//func_sesiones.php
@@ -56,6 +56,8 @@ if(isset($_POST['login'])){
         }    
     }         
 }
+
+
 
 
 ?>

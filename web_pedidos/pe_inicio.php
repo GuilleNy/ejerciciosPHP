@@ -36,7 +36,7 @@ echo '</pre>';
                 </div>
                 <div class="card-body text-center">
                     <div>
-                        <input type="submit" value="Comprar de productos" name="compraProd" class="btn btn-primary">
+                        <a href="pe_altaped.php" class="btn btn-primary">Alta Pedidos</a>
                     </div>
                     <hr>
                   
@@ -46,7 +46,7 @@ echo '</pre>';
                 </div>
                 <div class="card-footer text-center">
                     <div>
-                        <input type="submit" value="Cerrar Sesión" name="logout" class="btn btn-warning">
+                        <a href="comlogoutcli.php" class="btn btn-warning">Cerrar Sesión</a>
                     </div>
                 </div>
             </div>
@@ -56,24 +56,3 @@ echo '</pre>';
 </html>
 
 
-<?php
-
-if (isset($_POST['compraProd'])){
-    header("Location: ./comprocli.php");
-    exit();
-}
-
-if(isset($_POST['consultarCompras'])){
-    header("Location: ./comconscli.php");
-    exit();
-}
-
-if(isset($_POST['logout'])){
-    header("Location: comlogoutcli.php");
-    exit();
-    
-}  
-
-
-
-?>

@@ -43,19 +43,39 @@ function eliminarCookie($nombreCookie){
 
 
 function annadirCesta($producto, $cantProducto){
-    $cadena = $producto . "|" . $cantProducto;
     
-    $detallesProductos=explode("|", $cadena);
+    $detallesProductos=explode("|", $producto);
+    $detallesProductos[] = $cantProducto; // Cantidad del producto
+    
+    $detallesProductos[] = $detallesProductos[2] * $cantProducto;
 
     if (isset($_SESSION["compra"])) {
         $cestaProducto = $_SESSION["compra"];
-        $cestaProducto[] = $detallesProductos;
+        $encontrado = false;
+
+        foreach ($cestaProducto as $key => $productoCesta) {
+            if ($productoCesta[0] == $detallesProductos[0]) {
+                // Si el producto ya existe en la cesta se actualiza la cantidad
+                
+                $cestaProducto[$key][3] += $detallesProductos[3];
+                $cestaProducto[$key][4] += $detallesProductos[2] * $detallesProductos[3];
+                $encontrado = true;
+            }
+        }
+
+        if (!$encontrado) {
+            // Si el producto no existe en la cesta se le añade
+            $cestaProducto[] = $detallesProductos;
+        }
+        $_SESSION["compra"] = $cestaProducto;
     } else {
+       // Si no hay cesta en la sesion, la creamos
         $cestaProducto = array();
         $cestaProducto[] = $detallesProductos;
+        $_SESSION["compra"] = $cestaProducto;
     }
 
-    $_SESSION["compra"] = $cestaProducto;
+    
 }
 
 function devolverCesta()
