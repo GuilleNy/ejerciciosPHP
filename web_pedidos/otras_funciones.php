@@ -56,6 +56,19 @@ function verifica_campo_altaPedido(){
     return $enviar;
 }
 
+function obtenerUltimoCodigo(){
+
+    $ultimoID=consultaUltimaOrder();
+    $nuevoID = "";
+
+    if($ultimoID != False){
+        $cod = intval($ultimoID['ultima_order']);
+        $nuevoID = $cod + 1;
+    }else{
+        $nuevoID = 10100;
+    }
+    return $nuevoID ;
+}
 
 
 

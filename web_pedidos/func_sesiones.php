@@ -95,8 +95,8 @@ function vaciarCesta()
     }
 }
 
-function devolverNIF(){
-    return $_SESSION["VstNIF"];
+function devolverNumCli(){
+    return $_SESSION["VstUsuario"];
 }
 
 function precioTotalCesta(){

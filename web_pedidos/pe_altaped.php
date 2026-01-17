@@ -1,8 +1,8 @@
 
 <?php
 session_start();
-include "otras_funciones.php";
 include_once "consultas_db.php";
+include "otras_funciones.php";
 include_once "func_sesiones.php";
 
 if(!verificarSesion())
@@ -18,6 +18,9 @@ echo '<pre>';
 echo '</pre>';
 
 
+/********************************** PROGRAMA PRINCIPAL ************************************/
+
+
 if(isset($_POST['añadirCesta'])){
     if(verifica_campo_altaPedido()){
         
@@ -25,18 +28,61 @@ if(isset($_POST['añadirCesta'])){
         $cantProducto = depurar($_POST['cantidad']);
         annadirCesta($producto, $cantProducto);//func_sesiones.php
         header("Refresh: 0");
+        exit();
         
     }
 }else if(isset($_POST['pedido'])){
     registrarCompra();
     vaciarCesta();
+    
+
     #$importeTotal=precioTotalCesta();//func_sesiones.php 
 }else if(isset($_POST['vaciar'])){
     vaciarCesta();
     header("Refresh: 0");
 }else if(isset($_POST['atras'])){
     header("Location: ./pe_inicio.php");
+    exit();
 }
+
+function registrarCompra(){
+    $conn = conexion_BBDD();
+
+    try{
+        $conn->beginTransaction();
+
+        $numCli =  devolverNumCli(); //func_sesiones.php
+        $date = date("Y-m-d");
+        $codigoOrder = obtenerUltimoCodigo(); //otras_funciones.php,   Obtengo el ultimo numero de orden 
+        $cestaProductos = devolverCesta();
+        $orderLineNumber = 1;
+
+        if($cestaProductos != null){
+            crearOrders($codigoOrder , $numCli,  $date, $date);
+            
+            foreach ($cestaProductos as $productos => $detalles) {
+                $idProducto = $detalles[0];
+                $priceEach = $detalles[2];
+                $cantidadProd = $detalles[3]; //3
+                
+                crearOrderDetails($codigoOrder , $idProducto, $cantidadProd, $priceEach, $orderLineNumber);
+                
+                $orderLineNumber++;
+            }  
+            echo "Compra realizada con éxito.";
+        }else{
+            echo "La cesta esta vacia, no se puede registrar la compra.<br>";
+        }
+    $conn->commit();
+    }catch(PDOException $e){
+        if ($conn->inTransaction()) {
+            $conn->rollBack(); 
+        }
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+
 ?>
 
 
@@ -110,9 +156,3 @@ if(isset($_POST['añadirCesta'])){
 
 </html>
 
-
-<?php
-/********************************** PROGRAMA PRINCIPAL ************************************/
-
-
-?>
