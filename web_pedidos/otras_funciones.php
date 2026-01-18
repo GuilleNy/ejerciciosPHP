@@ -18,6 +18,44 @@ function recogerDatos(){
     return [$nomUsuario, $contrUsuario];
 }
 
+
+function registrarCompra(){
+    $conn = conexion_BBDD();
+
+    try{
+        $conn->beginTransaction();
+
+        $numCli =  devolverNumCli(); //func_sesiones.php
+        $date = date("Y-m-d");
+        $codigoOrder = obtenerUltimoCodigo(); //otras_funciones.php,   Obtengo el ultimo numero de orden 
+        $cestaProductos = devolverCesta();
+        $numeroPago = depurar($_POST['pago']);
+        $importeTotal=precioTotalCesta();
+        $orderLineNumber = 1;
+
+        crearOrders($codigoOrder , $numCli,  $date, $date);
+        
+        foreach ($cestaProductos as $productos => $detalles) {
+            $idProducto = $detalles[0];
+            $priceEach = $detalles[2];
+            $cantidadProd = $detalles[3]; //3
+            
+            crearOrderDetails($codigoOrder , $idProducto, $cantidadProd, $priceEach, $orderLineNumber);
+            actualizarCantidadProd($idProducto, $cantidadProd);
+            $orderLineNumber++;
+        }  
+        crearPayments($numCli, $numeroPago, $date, $importeTotal);
+    $conn->commit();
+    echo "Compra realizada con éxito.";
+    }catch(PDOException $e){
+        if ($conn->inTransaction()) {
+            $conn->rollBack(); 
+        }
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+
 function verifica_campo_login(){
     $mensaje = ""; 
     $enviar = True;  
@@ -68,6 +106,41 @@ function obtenerUltimoCodigo(){
         $nuevoID = 10100;
     }
     return $nuevoID ;
+}
+
+
+function verificarPago(){
+    $enviar = True;
+    $mensaje = " ";
+
+    $numeroPago = depurar($_POST['pago']);
+
+    if(strlen($numeroPago) != 7){
+        $enviar = False;
+        $mensaje .= "La informacion de pago debe contener 7 caracteres.</br>";
+    }else{
+        $indice = 0;
+        while($enviar && $indice < 2){
+            if(!ctype_upper($numeroPago[$indice])){
+                $enviar = False;
+                $mensaje .= "Los primeros dos caracteres deben ser letras mayusculas.</br>";
+            }
+            $indice++;
+        }
+
+        while($enviar && $indice < strlen($numeroPago)){
+            if(!ctype_digit($numeroPago[$indice])){
+                $enviar = False;
+                $mensaje .= "Los cincos digitos restantes deben ser numeros.</br>";
+            }
+            $indice++;
+        }
+    }
+    
+    if(!$enviar){
+        echo $mensaje;
+    }
+    return $enviar;
 }
 
 

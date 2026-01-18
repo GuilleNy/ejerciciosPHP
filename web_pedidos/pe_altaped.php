@@ -2,8 +2,9 @@
 <?php
 session_start();
 include_once "consultas_db.php";
-include "otras_funciones.php";
 include_once "func_sesiones.php";
+include "otras_funciones.php";
+
 
 if(!verificarSesion())
 {
@@ -23,20 +24,22 @@ echo '</pre>';
 
 if(isset($_POST['añadirCesta'])){
     if(verifica_campo_altaPedido()){
-        
         $producto = $_POST['producto'];
         $cantProducto = depurar($_POST['cantidad']);
         annadirCesta($producto, $cantProducto);//func_sesiones.php
         header("Refresh: 0");
         exit();
-        
     }
 }else if(isset($_POST['pedido'])){
-    registrarCompra();
-    vaciarCesta();
-    
-
-    #$importeTotal=precioTotalCesta();//func_sesiones.php 
+    $cesta = devolverCesta();
+    if($cesta != null ){
+        if(verificarPago()){
+            registrarCompra();
+            vaciarCesta();
+        }
+    }else{
+        echo "Debes seleccionar un producto";
+    }
 }else if(isset($_POST['vaciar'])){
     vaciarCesta();
     header("Refresh: 0");
@@ -44,44 +47,6 @@ if(isset($_POST['añadirCesta'])){
     header("Location: ./pe_inicio.php");
     exit();
 }
-
-function registrarCompra(){
-    $conn = conexion_BBDD();
-
-    try{
-        $conn->beginTransaction();
-
-        $numCli =  devolverNumCli(); //func_sesiones.php
-        $date = date("Y-m-d");
-        $codigoOrder = obtenerUltimoCodigo(); //otras_funciones.php,   Obtengo el ultimo numero de orden 
-        $cestaProductos = devolverCesta();
-        $orderLineNumber = 1;
-
-        if($cestaProductos != null){
-            crearOrders($codigoOrder , $numCli,  $date, $date);
-            
-            foreach ($cestaProductos as $productos => $detalles) {
-                $idProducto = $detalles[0];
-                $priceEach = $detalles[2];
-                $cantidadProd = $detalles[3]; //3
-                
-                crearOrderDetails($codigoOrder , $idProducto, $cantidadProd, $priceEach, $orderLineNumber);
-                
-                $orderLineNumber++;
-            }  
-            echo "Compra realizada con éxito.";
-        }else{
-            echo "La cesta esta vacia, no se puede registrar la compra.<br>";
-        }
-    $conn->commit();
-    }catch(PDOException $e){
-        if ($conn->inTransaction()) {
-            $conn->rollBack(); 
-        }
-        echo "Error: " . $e->getMessage();
-    }
-}
-
 
 ?>
 
@@ -123,6 +88,12 @@ function registrarCompra(){
                         <label for="producto">Cantidad:</label>
                         <input type="number" name="cantidad" min="1" value="1" class="form-control" >
                     </div>
+
+                    <div class="form-group">
+                        <label for="producto">Introducir informacion de pago:</label>
+                        <input type="text" name="pago"  class="form-control" >
+                    </div>
+
                     <BR>
                     <div>
                         <input type="submit" name="añadirCesta" value="Añadir a la cesta" class="btn btn-warning">

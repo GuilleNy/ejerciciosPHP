@@ -92,8 +92,8 @@ function crearOrderDetails($orderNum , $productCode, $quantityOrdered, $priceEac
 
 }
 
-function actualizarCantidadProd($conn, $idProd, $cant){
-
+function actualizarCantidadProd( $idProd, $cant){
+    $conn = conexion_BBDD();
     try{  
         $stmt = $conn->prepare("UPDATE products
                                 SET quantityInStock = quantityInStock - :cantidad
@@ -109,6 +109,22 @@ function actualizarCantidadProd($conn, $idProd, $cant){
     }
 }
 
+function crearPayments($customerNumber,$checkNumber, $paymentDate, $amount){
+    $conn = conexion_BBDD();
+    try{    
+        $stmt = $conn->prepare("INSERT INTO payments (customerNumber, checkNumber, paymentDate, amount )
+                                VALUES (:customerNumber, :checkNumber, :paymentDate, :amount)");
+        $stmt->bindParam(':customerNumber', $customerNumber);
+        $stmt->bindParam(':checkNumber', $checkNumber);
+        $stmt->bindParam(':paymentDate', $paymentDate);
+        $stmt->bindParam(':amount', $amount);
+        $stmt->execute();
+
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    }
+}
 
 ?>
 
