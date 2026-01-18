@@ -1,8 +1,8 @@
 <?php
-include_once "db/BBDD_pedidos.php";
 
-function comprobarLogin($usuario, $clave){
-    $conn = conexion_BBDD();
+
+function comprobarLogin($conn, $usuario, $clave){
+  
     try{    
         $stmt = $conn->prepare("SELECT customerNumber , contactLastName  
                                 FROM customers 
@@ -20,8 +20,8 @@ function comprobarLogin($usuario, $clave){
         } 
 }
 
-function obtenerProductos(){
-    $conn = conexion_BBDD();
+function obtenerProductos($conn){
+
     try{    
         $stmt = $conn->prepare("SELECT productCode , productName , buyPrice
                                 FROM products 
@@ -39,8 +39,8 @@ function obtenerProductos(){
 
 
 
-function consultaUltimaOrder(){
-    $conn = conexion_BBDD();
+function consultaUltimaOrder($conn){
+
 
     try{  
         $stmt = $conn->prepare("SELECT max(orderNumber) 'ultima_order' FROM orders");
@@ -54,8 +54,8 @@ function consultaUltimaOrder(){
     } 
 }
 
-function crearOrders($orderNum , $customerNumber, $orderDate, $requiredDate){
-    $conn = conexion_BBDD();
+function crearOrders($conn, $orderNum , $customerNumber, $orderDate, $requiredDate){
+
     $status = "Shipped";
     try{    
         $stmt = $conn->prepare("INSERT INTO orders (orderNumber, orderDate, requiredDate, `status` , customerNumber )
@@ -73,8 +73,8 @@ function crearOrders($orderNum , $customerNumber, $orderDate, $requiredDate){
     }
 }
 
-function crearOrderDetails($orderNum , $productCode, $quantityOrdered, $priceEach, $orderLineNumber){
-    $conn = conexion_BBDD();
+function crearOrderDetails($conn, $orderNum , $productCode, $quantityOrdered, $priceEach, $orderLineNumber){
+
     try{    
         $stmt = $conn->prepare("INSERT INTO orderdetails (orderNumber, productCode, quantityOrdered, priceEach, orderLineNumber )
                                 VALUES (:orderNumber, :productCode, :quantityOrdered, :priceEach, :orderLineNumber )");
@@ -92,8 +92,8 @@ function crearOrderDetails($orderNum , $productCode, $quantityOrdered, $priceEac
 
 }
 
-function actualizarCantidadProd( $idProd, $cant){
-    $conn = conexion_BBDD();
+function actualizarCantidadProd($conn,  $idProd, $cant){
+
     try{  
         $stmt = $conn->prepare("UPDATE products
                                 SET quantityInStock = quantityInStock - :cantidad
@@ -109,8 +109,8 @@ function actualizarCantidadProd( $idProd, $cant){
     }
 }
 
-function crearPayments($customerNumber,$checkNumber, $paymentDate, $amount){
-    $conn = conexion_BBDD();
+function crearPayments($conn, $customerNumber,$checkNumber, $paymentDate, $amount){
+
     try{    
         $stmt = $conn->prepare("INSERT INTO payments (customerNumber, checkNumber, paymentDate, amount )
                                 VALUES (:customerNumber, :checkNumber, :paymentDate, :amount)");

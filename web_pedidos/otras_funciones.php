@@ -27,24 +27,24 @@ function registrarCompra(){
 
         $numCli =  devolverNumCli(); //func_sesiones.php
         $date = date("Y-m-d");
-        $codigoOrder = obtenerUltimoCodigo(); //otras_funciones.php,   Obtengo el ultimo numero de orden 
+        $codigoOrder = obtenerUltimoCodigo($conn); //otras_funciones.php,   Obtengo el ultimo numero de orden 
         $cestaProductos = devolverCesta();
         $numeroPago = depurar($_POST['pago']);
         $importeTotal=precioTotalCesta();
         $orderLineNumber = 1;
 
-        crearOrders($codigoOrder , $numCli,  $date, $date);
+        crearOrders($conn, $codigoOrder , $numCli,  $date, $date);
         
         foreach ($cestaProductos as $productos => $detalles) {
             $idProducto = $detalles[0];
             $priceEach = $detalles[2];
             $cantidadProd = $detalles[3]; //3
             
-            crearOrderDetails($codigoOrder , $idProducto, $cantidadProd, $priceEach, $orderLineNumber);
-            actualizarCantidadProd($idProducto, $cantidadProd);
+            crearOrderDetails($conn, $codigoOrder , $idProducto, $cantidadProd, $priceEach, $orderLineNumber);
+            actualizarCantidadProd($conn, $idProducto, $cantidadProd);
             $orderLineNumber++;
         }  
-        crearPayments($numCli, $numeroPago, $date, $importeTotal);
+        crearPayments($conn, $numCli, $numeroPago, $date, $importeTotal);
     $conn->commit();
     echo "Compra realizada con éxito.";
     }catch(PDOException $e){
@@ -94,9 +94,9 @@ function verifica_campo_altaPedido(){
     return $enviar;
 }
 
-function obtenerUltimoCodigo(){
+function obtenerUltimoCodigo($conn){
 
-    $ultimoID=consultaUltimaOrder();
+    $ultimoID=consultaUltimaOrder($conn);
     $nuevoID = "";
 
     if($ultimoID != False){

@@ -1,9 +1,9 @@
 
 <?php
-
-include "otras_funciones.php";
+include_once "db/BBDD_pedidos.php";
 include "consultas_db.php";
 include "func_sesiones.php";
+include "otras_funciones.php";
 
 echo '<pre>';
     print_r($_COOKIE);
@@ -48,8 +48,9 @@ echo '</pre>';
 <?php
 if(isset($_POST['login'])){ 
     if (verifica_campo_login()) { //otras_funciones.php
+        $conn = conexion_BBDD();
         list($usuario, $clave)=recogerDatos();//otras_funciones.php
-        if(comprobarLogin($usuario, $clave)){ //consulta_db.php
+        if(comprobarLogin($conn, $usuario, $clave)){ //consulta_db.php
             iniciarSesion($usuario, $clave);//func_sesiones.php
         }else{
             echo "Usuario o contraseña incorrecto.";

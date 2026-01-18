@@ -1,6 +1,7 @@
 
 <?php
 session_start();
+include_once "db/BBDD_pedidos.php";
 include_once "consultas_db.php";
 include_once "func_sesiones.php";
 include "otras_funciones.php";
@@ -76,7 +77,8 @@ if(isset($_POST['añadirCesta'])){
                         <select name="producto" class="form-control">
                             <option value="" disabled selected>-- Selecciona un Producto --</option>
                             <?php
-                                $producto= obtenerProductos();
+                                $conn = conexion_BBDD();
+                                $producto= obtenerProductos($conn);
                                 foreach ($producto as $fila) {
                                     echo "<option value=\"" . $fila['productCode'] ."|". $fila['productName'] ."|". $fila['buyPrice'] . "\">" . $fila['productName'] . "</option>";
                                 }
