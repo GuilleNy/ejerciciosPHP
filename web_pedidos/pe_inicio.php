@@ -41,7 +41,11 @@ echo '</pre>';
                     <hr>
                   
                     <div>
-                        <input type="submit" value="Consultar Compras" name="consultarCompras" class="btn btn-primary">
+                        <a href="pe_consped.php" class="btn btn-primary">Consultar Compras</a>
+                    </div>
+                    <hr>
+                    <div>
+                        <a href="pe_consprodstock.php" class="btn btn-primary">Consultar Stock</a>
                     </div>
                 </div>
                 <div class="card-footer text-center">

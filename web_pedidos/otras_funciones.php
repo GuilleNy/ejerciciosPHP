@@ -94,6 +94,42 @@ function verifica_campo_altaPedido(){
     return $enviar;
 }
 
+function verifica_campo_consultaCli(){
+    $mensaje = ""; 
+    $enviar = True;  
+
+    if (empty($_POST['numCli'])) {
+        $mensaje .= "El campo Numero Cliente esta vacio.<br>";
+        $enviar = False;  
+    }
+
+    echo $mensaje;
+    return $enviar;
+}
+
+function verificarNumCli($conn){
+    $existe = False;
+    $numCli = depurar($_POST['numCli']);
+    $cliente = consultarClientes($conn, $numCli);
+    if($cliente != False){
+        $existe = True;
+    }
+    return $existe;
+}
+
+function verificarCampoProducto(){
+    $mensaje = ""; 
+    $enviar = True;  
+
+    if (empty($_POST['producto'])) {
+        $mensaje .= "El campo producto esta vacio.<br>";
+        $enviar = False;  
+    }
+
+    echo $mensaje;
+    return $enviar;
+}
+
 function obtenerUltimoCodigo($conn){
 
     $ultimoID=consultaUltimaOrder($conn);
@@ -143,6 +179,68 @@ function verificarPago(){
     return $enviar;
 }
 
+function mostrarConsultas($conn){
+    $consulta = consultaOrdernCli($conn);
+    
+    if($consulta != False)
+    {
+        echo "<div id='cesta'>";
+            print '<table class="table table-bordered table-hover table-sm text-nowrap">
+                    <tr>
+                        <th>Order Number</th>
+                        <th>Order Date</th>
+                        <th>Status</th>
+                    </tr>';
+            
+            foreach ($consulta as $row => $valor) {
+                $orderNumber = $valor['orderNumber'];
+                $orderDetails = consultaOrdernDetails($conn, $orderNumber); //consultas_db.php   
+                
+                echo "<tr>
+                        <td>" . $valor['orderNumber'] . "</td>
+                        <td>" . $valor['orderDate'] . "</td>
+                        <td>" . $valor['status'] . "</td>
+                    </tr>";
 
+                echo "<tr><td colspan='3'>
+                        <table class='table table-bordered table-hover table-sm text-nowrap'>
+                            <tr>
+                                <th>OrderLine Number</th>
+                                <th>Order Number</th>
+                                <th>Product Name</th>
+                                <th>Quantity Ordered</th>
+                                <th>Price Each</th>
+                            </tr>";
+                    foreach ($orderDetails as $detalles => $info) {
+                        echo "<tr>
+                                <td>" . $info['orderLineNumber'] . "</td>
+                                <td>" . $info['orderNumber'] . "</td>
+                                <td>" . $info['productName'] . "</td>
+                                <td>" . $info['quantityOrdered'] . "</td>
+                                <td>" . $info['priceEach'] . "</td>
+                            </tr>";
+                    }
+                echo " </table></td></tr>";
+            }
+            print "</table>";
+        echo "</div>";
+    }
+}
+        
+function mostrarStock($conn, $productCode){
+    $productos = consultarStockProducto($conn , $productCode);
 
+    //var_dump($productos);
+    if($productos != false)
+    {
+        echo "<div id='cesta'>";
+        print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Nombre Producto</th><th>Cantidad</th></tr>';
+        
+        print "<tr><td>" . $productos['productName'] . "</td><td>" . $productos['quantityInStock'] . "</td></tr>";
+        
+        print "</tr>";
+        echo "</div>";
+    }
+
+}
 ?>

@@ -40,8 +40,6 @@ function obtenerProductos($conn){
 
 
 function consultaUltimaOrder($conn){
-
-
     try{  
         $stmt = $conn->prepare("SELECT max(orderNumber) 'ultima_order' FROM orders");
         $stmt->execute();
@@ -56,7 +54,7 @@ function consultaUltimaOrder($conn){
 
 function crearOrders($conn, $orderNum , $customerNumber, $orderDate, $requiredDate){
 
-    $status = "Shipped";
+    $status = "In Process";
     try{    
         $stmt = $conn->prepare("INSERT INTO orders (orderNumber, orderDate, requiredDate, `status` , customerNumber )
                                 VALUES (:orderNumber, :orderDate, :requiredDate, :statuss, :customerNumber )");
@@ -124,6 +122,92 @@ function crearPayments($conn, $customerNumber,$checkNumber, $paymentDate, $amoun
     {
         echo "Error: " . $e->getMessage();
     }
+}
+
+function consultarClientes($conn, $customerNumber){
+    try{  
+        $stmt = $conn->prepare("SELECT customerNumber
+                                FROM customers
+                                WHERE customerNumber = :customerNumber");
+        $stmt->bindParam(':customerNumber', $customerNumber);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $clientes=$stmt->fetch();
+        return $clientes;
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    } 
+}
+
+function consultaOrdernCli($conn){
+    $customerNumber = depurar($_POST['numCli']);
+    try{  
+        $stmt = $conn->prepare("SELECT orderNumber, orderDate, `status`
+                                FROM orders
+                                WHERE customerNumber = :customerNumber");
+        $stmt->bindParam(':customerNumber', $customerNumber);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $pedidos=$stmt->fetchAll();
+        return $pedidos;
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    } 
+}
+
+function consultaOrdernDetails($conn , $orderNumber){
+    
+    try{  
+        $stmt = $conn->prepare("SELECT o.orderLineNumber, o.orderNumber, p.productName, o.quantityOrdered, o.priceEach
+                                FROM orderdetails o, products p, orders d
+                                WHERE p.productCode = o.productCode
+                                AND o.orderNumber = d.orderNumber
+                                AND  o.orderNumber = :orderNumber
+                                ORDER BY o.orderLineNumber");
+        $stmt->bindParam(':orderNumber', $orderNumber);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $pedidosDetallados = $stmt->fetchAll();
+        return $pedidosDetallados;
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    } 
+}
+
+function obtenerProductosStock($conn){
+
+    try{    
+        $stmt = $conn->prepare("SELECT productCode , productName
+                                FROM products");
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $all_productos=$stmt->fetchAll();
+        return $all_productos;
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    } 
+
+}
+
+function consultarStockProducto($conn , $productCode){
+    
+    try{  
+        $stmt = $conn->prepare("SELECT productName, quantityInStock
+                                FROM products
+                                WHERE productCode = :productCode");
+        $stmt->bindParam(':productCode', $productCode);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stockProducto = $stmt->fetch();
+        return $stockProducto;
+    }catch(PDOException $e)
+    {
+        echo "Error: " . $e->getMessage();
+    } 
 }
 
 ?>

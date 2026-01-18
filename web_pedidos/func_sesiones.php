@@ -112,4 +112,41 @@ function precioTotalCesta(){
     return $precioTotal;
 }
 
+
+
+/*  FUNCIONES PARA GESTIONAR LA CONSULTA DE PEDIDOS POR CLIENTE
+function crearSesionConsulta($orderCliente){
+    if (!isset($_SESSION['consOrderClie'])) {
+        $_SESSION['consOrderClie'] = [];
+    }
+
+    $_SESSION['consOrderClie'] = $orderCliente;
+    
+}
+
+function devolverConsulta(){
+    
+    $order = null;
+    if(isset($_SESSION["consOrderClie"])){
+        $order = $_SESSION["consOrderClie"];
+    }
+        
+    return $order;
+}
+
+
+function vaciarConsulta()
+{
+    unset($_SESSION["consOrderClie"]);
+
+    foreach ($_COOKIE as $nombre => $valor) {
+        if ($nombre !== session_name()) { //evito borrar la cookie de sesion
+            setcookie($nombre, "", time() - 3600, "/");
+        }
+    }
+}
+
+*/
+
+
 ?>
