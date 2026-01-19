@@ -29,12 +29,12 @@ echo '</pre>';
             <div class="card-body">
                 <form id="product-form"  action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
                     <div class="form-group">
-                        <label for="usuario">Usuario:</label>
+                        <B>Usuario:</B>
                         <input type="text" name="usuario" class="form-control">
                     </div>
 
                     <div class="form-group">
-                        <label for="clave">Clave:</label>
+                        <B>Clave:</B>
                         <input type="text" name="clave" class="form-control">
                     </div>
                     <input type="submit" name="login" value="Login" class="btn btn-warning">
@@ -51,7 +51,7 @@ if(isset($_POST['login'])){
         $conn = conexion_BBDD();
         list($usuario, $clave)=recogerDatos();//otras_funciones.php
         if(comprobarLogin($conn, $usuario, $clave)){ //consulta_db.php
-            iniciarSesion($usuario, $clave);//func_sesiones.php
+            iniciarSesion($conn, $usuario, $clave);//func_sesiones.php
         }else{
             echo "Usuario o contraseña incorrecto.";
         }    

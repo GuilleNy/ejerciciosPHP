@@ -184,45 +184,49 @@ function mostrarConsultas($conn){
     
     if($consulta != False)
     {
-        echo "<div id='cesta'>";
-            print '<table class="table table-bordered table-hover table-sm text-nowrap">
-                    <tr>
-                        <th>Order Number</th>
-                        <th>Order Date</th>
-                        <th>Status</th>
-                    </tr>';
+        echo "<div>";
+            
+                    
             
             foreach ($consulta as $row => $valor) {
                 $orderNumber = $valor['orderNumber'];
                 $orderDetails = consultaOrdernDetails($conn, $orderNumber); //consultas_db.php   
-                
-                echo "<tr>
-                        <td>" . $valor['orderNumber'] . "</td>
-                        <td>" . $valor['orderDate'] . "</td>
-                        <td>" . $valor['status'] . "</td>
-                    </tr>";
+                print '<table style="border:2px solid black; border-collapse:collapse;">';
+                    echo "<tr>
+                            <th>Order Number</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                        </tr>";
+                    echo "<tr>
+                            <td>" . $valor['orderNumber'] . "</td>
+                            <td>" . $valor['orderDate'] . "</td>
+                            <td>" . $valor['status'] . "</td>
+                        </tr>";
 
-                echo "<tr><td colspan='3'>
-                        <table class='table table-bordered table-hover table-sm text-nowrap'>
-                            <tr>
-                                <th>OrderLine Number</th>
-                                <th>Order Number</th>
-                                <th>Product Name</th>
-                                <th>Quantity Ordered</th>
-                                <th>Price Each</th>
-                            </tr>";
-                    foreach ($orderDetails as $detalles => $info) {
-                        echo "<tr>
-                                <td>" . $info['orderLineNumber'] . "</td>
-                                <td>" . $info['orderNumber'] . "</td>
-                                <td>" . $info['productName'] . "</td>
-                                <td>" . $info['quantityOrdered'] . "</td>
-                                <td>" . $info['priceEach'] . "</td>
-                            </tr>";
-                    }
-                echo " </table></td></tr>";
+                    echo "<tr><td colspan='3'>
+                            <table class='table table-bordered table-hover table-sm text-nowrap'>
+                                <tr>
+                                    <th>OrderLine Number</th>
+                                    <th>Order Number</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity Ordered</th>
+                                    <th>Price Each</th>
+                                </tr>";
+                                foreach ($orderDetails as $detalles => $info) {
+                                    echo "<tr>
+                                            <td>" . $info['orderLineNumber'] . "</td>
+                                            <td>" . $info['orderNumber'] . "</td>
+                                            <td>" . $info['productName'] . "</td>
+                                            <td>" . $info['quantityOrdered'] . "</td>
+                                            <td>" . $info['priceEach'] . "</td>
+                                        </tr>";
+                                }
+                                echo "<BR>";
+                            echo " </table></td></tr>";
+                print "</table>";
+                echo "<hr>";
             }
-            print "</table>";
+            
         echo "</div>";
     }
 }
@@ -234,7 +238,11 @@ function mostrarStock($conn, $productCode){
     if($productos != false)
     {
         echo "<div id='cesta'>";
-        print '<table class="table table-bordered table-hover table-sm text-nowrap"><tr><th>Nombre Producto</th><th>Cantidad</th></tr>';
+        print '<table class="table table-bordered table-hover table-sm text-nowrap">
+            <tr>
+                <th>Nombre Producto</th>
+                <th>Cantidad</th>
+            </tr>';
         
         print "<tr><td>" . $productos['productName'] . "</td><td>" . $productos['quantityInStock'] . "</td></tr>";
         

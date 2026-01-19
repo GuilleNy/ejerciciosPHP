@@ -1,8 +1,10 @@
 <?php
-function crearSesion($usuario, $contraseña){
+function crearSesion($conn, $usuario, $contraseña){
     session_start();
     $_SESSION["VstUsuario"]=$usuario;
     $_SESSION["VstContraseña"]=$contraseña;
+
+    $_SESSION["DatosUsuario"] = obtenerDatosCli($conn, $usuario);
     
 }
 
@@ -14,10 +16,10 @@ function verificarSesion(){
     return $sessionCreada;
 }
 
-function iniciarSesion($usu, $contra){
+function iniciarSesion($conn, $usu, $contra){
     //si no esta creada la sesion crearmela
     if(!(isset($_SESSION["VstUsuario"]) && isset($_SESSION["VstContraseña"]))){
-        crearSesion($usu, $contra);
+        crearSesion($conn ,$usu, $contra);
     }
     //Si la sesion del usario con su contraseña esta creada , esta puede acceder al inicio de la pagina
     if(verificarSesion()){

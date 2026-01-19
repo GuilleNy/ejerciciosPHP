@@ -39,7 +39,7 @@ $conn = conexion_BBDD();
                 <form id="product-form"  action="<?php htmlspecialchars ($_SERVER["PHP_SELF"]); ?>" method="post" class="card-body">
 
                     <div class="form-group">
-                        <label for="producto">Numero Cliente:</label>
+                        <B>Numero Cliente:</B>
                         <input type="text"  name="numCli"  class="form-control" >
                     </div>
 

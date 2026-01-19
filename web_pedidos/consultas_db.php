@@ -20,6 +20,23 @@ function comprobarLogin($conn, $usuario, $clave){
         } 
 }
 
+function obtenerDatosCli($conn, $usuario){
+    
+    try{    
+        $stmt = $conn->prepare("SELECT customerNumber, contactLastName , contactFirstName, addrebLine1, creditLimit
+                                FROM customers 
+                                WHERE customerNumber = :numCli");
+        $stmt->bindParam(':numCli', $usuario);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $datos=$stmt->fetch();
+        return $datos;
+    }catch(PDOException $e)
+        {
+            echo "Error: " . $e->getMessage();
+        } 
+}
+
 function obtenerProductos($conn){
 
     try{    
