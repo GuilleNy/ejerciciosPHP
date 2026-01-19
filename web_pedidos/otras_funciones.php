@@ -203,26 +203,6 @@ function mostrarConsultas($conn){
                             <td>" . $valor['status'] . "</td>
                         </tr>";
 
-                    echo "<tr><td colspan='3'>
-                            <table class='table table-bordered table-hover table-sm text-nowrap'>
-                                <tr>
-                                    <th>OrderLine Number</th>
-                                    <th>Order Number</th>
-                                    <th>Product Name</th>
-                                    <th>Quantity Ordered</th>
-                                    <th>Price Each</th>
-                                </tr>";
-                                foreach ($orderDetails as $detalles => $info) {
-                                    echo "<tr>
-                                            <td>" . $info['orderLineNumber'] . "</td>
-                                            <td>" . $info['orderNumber'] . "</td>
-                                            <td>" . $info['productName'] . "</td>
-                                            <td>" . $info['quantityOrdered'] . "</td>
-                                            <td>" . $info['priceEach'] . "</td>
-                                        </tr>";
-                                }
-                                echo "<BR>";
-                            echo " </table></td></tr>";
                 print "</table>";
                 echo "<hr>";
             }
