@@ -1,28 +1,4 @@
 
-<?php
-session_start();
-include "db/vconfig.php";
-include_once "consultas_db.php";
-include_once "func_sesiones.php";
-include "otras_funciones.php";
-
-
-#Aqui verifico si la session sigue activa, en el caso de que NO esta vuelve a la pagina del login
-if(!verificarSesion()) //func_sesiones.php
-{
-	header("Location: index.php");
-}
-
-echo '<pre>';
-    print_r($_SESSION);
-echo '</pre>';
-echo '<pre>';
-    print_r($_COOKIE);
-echo '</pre>';
-$conn = conexion_BBDD();
-
-?>
-
 
 <html>
    
@@ -47,18 +23,13 @@ $conn = conexion_BBDD();
 	<!-- INICIO DEL FORMULARIO -->
 	<form action="" method="post">
 	
-		<B>Email Cliente:</B><?php echo $_SESSION["usuario"]['email']; ?> <BR>
-		<B>Nombre Cliente:</B>  <?php echo $_SESSION["usuario"]['nombre']." ".$_SESSION['usuario']['apellidos']; ?>  <BR>
-		<B>Fecha:</B>  <?php echo $_SESSION["usuario"]['fechaSistema']; ?>   <BR><BR>
+		<B>Email Cliente:</B><?php //echo $_SESSION["usuario"]['email']; ?> <BR>
+		<B>Nombre Cliente:</B>  <?php //echo $_SESSION["usuario"]['nombre']." ".$_SESSION['usuario']['apellidos']; ?>  <BR>
+		<B>Fecha:</B>  <?php //echo $_SESSION["usuario"]['fechaSistema']; ?>   <BR><BR>
 		
 		<B>Numero Reserva</B>
 		<select name="reserva" class="form-control">
-			<?php
-				$reservas = obtenerReserva($conn, $_SESSION["usuario"]['dni']);
-				foreach($reservas as $id){
-					echo "<option value=". $id['id_reserva'] .">".$id['id_reserva']."</option>";
-				}
-			?>
+			
 		</select>		
 		
 		
@@ -75,14 +46,3 @@ $conn = conexion_BBDD();
    
 </html>
 
-<?php
-
-if(isset($_POST['consultar'])){
-    if(verifica_campo_consultaCli()){
-        consultaVuelo($conn);
-    }
-}else if(isset($_POST['volver'])){
-    header("Location: vinicio.php");
-    exit();
-}    
-?>

@@ -54,9 +54,9 @@ if(isset($_POST['submit'])){
     if (verifica_campo_login()) { //otras_funciones.php
         $conn = conexion_BBDD();
         list($usuario, $contra)=recogerDatos();//otras_funciones.php
-        $datos = obtenerDatosCli($conn, $usuario, $contra);
+        $datos = obtenerDatosCli($conn, $usuario);
         if(!empty($datos)){ //consulta_db.php
-            iniciarSesion($conn, $usuario, $contra, $datos);//func_sesiones.php
+            iniciarSesion($usuario, $contra, $datos);//func_sesiones.php
         }else{
             echo "Usuario o contraseña incorrecto.";
         }    
